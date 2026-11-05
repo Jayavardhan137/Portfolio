@@ -3,52 +3,64 @@
 import React, { useState } from "react";
 import { CinematicLoader } from "@/components/ui/CinematicLoader";
 import { Navbar } from "@/components/navigation/Navbar";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { AboutSection } from "@/components/sections/AboutSection";
-import { SkillsSection } from "@/components/sections/SkillsSection";
-import { WorkSection } from "@/components/sections/WorkSection";
-import { ExperienceSection } from "@/components/sections/ExperienceSection";
-import { ServicesSection } from "@/components/sections/ServicesSection";
-import { ContactSection } from "@/components/sections/ContactSection";
-import { Footer } from "@/components/sections/Footer";
+import { HeroSection } from "@/components/echo/HeroSection";
+import { ScrollExpandMedia } from "@/components/echo/ScrollExpandMedia";
+import { ExperienceSpatial } from "@/components/echo/ExperienceSpatial";
+import { FeaturedProjectsCarousel } from "@/components/echo/FeaturedProjectsCarousel";
+import { WorksWheelDrum } from "@/components/echo/WorksWheelDrum";
+import { ServicesAccordion } from "@/components/echo/ServicesAccordion";
+import { FooterContact } from "@/components/echo/FooterContact";
 
 export default function Home() {
-  const [loaderComplete, setLoaderComplete] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [prefilledService, setPrefilledService] = useState("Landing Page Design");
+
+  const openContact = (service?: string) => {
+    if (service) setPrefilledService(service);
+    setContactModalOpen(true);
+  };
 
   return (
     <>
-      {/* Cinematic Studio Entrance Loader */}
-      <CinematicLoader onComplete={() => setLoaderComplete(true)} />
+      {/* Orbital ECHO Preloader */}
+      <CinematicLoader />
 
-      <main className="relative min-h-screen bg-[#050505] text-[#f5f5f7] flex flex-col selection:bg-white selection:text-black">
-        {/* Navigation */}
+      <main className="relative min-h-screen bg-[#FAFAFA] text-[#121212] flex flex-col selection:bg-black selection:text-white">
+        {/* Navigation Bar */}
         <Navbar />
 
         {/* Hero Section */}
-        <HeroSection />
+        <HeroSection
+          onOpenContact={() => openContact()}
+          onSelectService={(idx) => {
+            const services = ["UI/UX", "Web Design", "Landing Page Design", "AI-Powered Applications"];
+            openContact(services[idx] || "Landing Page Design");
+          }}
+        />
 
-        {/* About Section */}
-        <AboutSection />
+        {/* About Section: ScrollExpandMedia Kinetic Canvas */}
+        <ScrollExpandMedia onOpenContact={() => openContact()} />
 
-        {/* Skills / Technical Discipline */}
-        <SkillsSection />
+        {/* Experience Section: Where I've Been Horizontal Spatial Canvas */}
+        <ExperienceSpatial />
 
-        {/* Selected Work / Projects */}
-        <WorkSection />
+        {/* Featured Projects Carousel (Curved Liquid View + Modal) */}
+        <FeaturedProjectsCarousel />
 
-        {/* Journey / Experience Timeline */}
-        <ExperienceSection />
+        {/* Landing Pages Section: WorksWheel 3D Drum Reel */}
+        <WorksWheelDrum />
 
-        {/* Services & Offerings */}
-        <ServicesSection />
+        {/* The Services We Provide Accordion */}
+        <ServicesAccordion onInquire={(service) => openContact(service)} />
 
-        {/* Contact Section */}
-        <ContactSection />
-
-        {/* Footer */}
-        <Footer />
+        {/* Footer: Let's Talk & Interactive Contact Modal */}
+        <FooterContact
+          isModalOpen={contactModalOpen}
+          onCloseModal={() => setContactModalOpen(false)}
+          onOpenModal={() => setContactModalOpen(true)}
+          prefilledService={prefilledService}
+        />
       </main>
     </>
   );
 }
-

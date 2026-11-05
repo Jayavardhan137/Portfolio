@@ -95,3 +95,4 @@ export function PortraitSilhouette({ className = "" }: { className?: string }) {
     </div>
   );
 }
+

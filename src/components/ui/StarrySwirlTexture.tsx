@@ -143,3 +143,4 @@ export function StarrySwirlTexture({ className = "" }: { className?: string }) {
     </div>
   );
 }
+

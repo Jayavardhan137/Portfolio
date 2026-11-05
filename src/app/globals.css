@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #050505;
-  --foreground: #f5f5f7;
+  --background: #FAFAFA;
+  --foreground: #121212;
 }
 
 * {
@@ -12,8 +12,8 @@
 }
 
 html {
-  background-color: #050505;
-  color: #f5f5f7;
+  background-color: #FAFAFA;
+  color: #121212;
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -40,27 +40,40 @@ html {
 
 /* Text Selection styling */
 ::selection {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #000000;
+  color: #ffffff;
 }
 
-/* Hide default cursor on desktop when custom cursor is active */
-@media (hover: hover) and (pointer: fine) {
-  body {
-    cursor: none;
-  }
-
-  a, button, input, textarea, select {
-    cursor: none;
-  }
+/* Metallic gradient for hero PORTFOLIO title */
+.metallic-title {
+  display: inline-block;
+  background: linear-gradient(180deg, #1A1A1A 0%, #4A4A4A 35%, #8E8E8E 60%, #BDBDBD 85%, #E5E5E5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Ambient glow utility */
-.glow-subtle {
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+/* Portrait gradient mask so bottom of person fades cleanly into background */
+.hero-portrait-mask {
+  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
 }
 
-.glow-ambient {
-  box-shadow: 0 0 60px rgba(255, 255, 255, 0.12);
+/* Footer Metallic Title */
+.footer-metallic-title {
+  background: linear-gradient(180deg, #FFFFFF 0%, #a8a8a8 50%, #444444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: filter 0.3s ease;
+}
+.footer-metallic-title:hover {
+  filter: brightness(1.2);
 }
 
+/* Ambient subtle utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
