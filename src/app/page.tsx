@@ -3,11 +3,10 @@
 import React, { useState } from "react";
 import { CinematicLoader } from "@/components/ui/CinematicLoader";
 import { Navbar } from "@/components/navigation/Navbar";
-import { PendulumHero } from "@/components/echo/PendulumHero";
+import { HeroSection } from "@/components/echo/HeroSection";
 import { ScrollExpandMedia } from "@/components/echo/ScrollExpandMedia";
 import { ExperienceSpatial } from "@/components/echo/ExperienceSpatial";
 import { FeaturedProjectsCarousel } from "@/components/echo/FeaturedProjectsCarousel";
-import { WorksWheelDrum } from "@/components/echo/WorksWheelDrum";
 import { ServicesAccordion } from "@/components/echo/ServicesAccordion";
 import { FooterContact } from "@/components/echo/FooterContact";
 
@@ -25,12 +24,18 @@ export default function Home() {
       {/* Orbital ECHO Preloader */}
       <CinematicLoader />
 
-      <main className="relative min-h-screen bg-[#050507] text-white flex flex-col selection:bg-white selection:text-black">
+      <main className="relative min-h-screen bg-[#FAFAFA] text-[#121212] flex flex-col selection:bg-black selection:text-white">
         {/* Navigation Bar */}
         <Navbar />
 
-        {/* Cinematic Kinetic Pendulum Hero Section (ADITHYA Reference Video Exact Architecture) */}
-        <PendulumHero />
+        {/* Hero Section */}
+        <HeroSection
+          onOpenContact={() => openContact()}
+          onSelectService={(idx) => {
+            const services = ["UI/UX", "Web Design", "Landing Page Design", "AI-Powered Applications"];
+            openContact(services[idx] || "Landing Page Design");
+          }}
+        />
 
         {/* About Section: ScrollExpandMedia Kinetic Canvas */}
         <ScrollExpandMedia onOpenContact={() => openContact()} />
@@ -40,9 +45,6 @@ export default function Home() {
 
         {/* Featured Projects Carousel (Curved Liquid View + Modal) */}
         <FeaturedProjectsCarousel />
-
-        {/* Landing Pages Section: WorksWheel 3D Drum Reel */}
-        <WorksWheelDrum />
 
         {/* The Services We Provide Accordion */}
         <ServicesAccordion onInquire={(service) => openContact(service)} />
