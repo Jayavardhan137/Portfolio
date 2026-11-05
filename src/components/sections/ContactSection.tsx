@@ -6,25 +6,19 @@ import {
   Mail,
   Copy,
   Check,
-  ArrowUpRight,
   Send,
-  Sparkles,
+  ArrowUpRight,
 } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 import { useAudio } from "@/hooks/useAudio";
 
 export function ContactSection() {
   const { playHover, playClick } = useAudio();
   const [copied, setCopied] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    service: "Full-Stack Web Development",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showQuickForm, setShowQuickForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
   const copyEmail = () => {
@@ -34,312 +28,223 @@ export function ContactSection() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     playClick();
-    setIsSubmitting(true);
-
-    // Simulate immediate smooth submission
+    setSubmitted(true);
     setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-      setFormData({
-        name: "",
-        email: "",
-        service: "Full-Stack Web Development",
-        message: "",
-      });
-      setTimeout(() => setSubmitted(false), 6000);
-    }, 1000);
+      setSubmitted(false);
+      setShowQuickForm(false);
+      setFormData({ name: "", email: "", message: "" });
+    }, 3000);
   };
 
   return (
     <section
       id="contact"
-      className="relative min-h-screen py-24 md:py-36 px-6 sm:px-8 md:px-12 bg-[#050505] text-white border-t border-white/10 overflow-hidden"
+      className="relative min-h-[90vh] py-28 px-6 sm:px-8 md:px-12 bg-[#050505] text-white flex flex-col justify-between border-t border-white/10 overflow-hidden select-none"
     >
-      {/* Background Volumetric Spotlight */}
+      {/* Background Volumetric Glow */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none opacity-20 blur-3xl rounded-full"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] pointer-events-none opacity-20 blur-3xl rounded-full"
         style={{
           background:
-            "radial-gradient(ellipse at bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, transparent 80%)",
+            "radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, transparent 80%)",
         }}
       />
 
-      <div className="max-w-7xl mx-auto flex flex-col gap-16 md:gap-24 relative z-10">
-        {/* Huge Dramatic Typography (Video Frame_15 Inspiration) */}
-        <div className="flex flex-col items-center text-center gap-6">
+      <div className="max-w-7xl w-full mx-auto my-auto flex flex-col items-center text-center gap-10 relative z-10">
+        {/* Massive Typographic Headline (Frame 20 Exact Match: "LET'S TALK") */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center gap-4"
+        >
           <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] text-neutral-400 uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>06 // INITIATE DIALOGUE</span>
+            <span>INITIATE COLLABORATION</span>
           </div>
 
-          <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black font-sans uppercase tracking-tighter leading-[0.92] text-white max-w-6xl">
-            LET'S BUILD{" "}
-            <span className="text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.7)] hover:text-white transition-colors duration-500">
-              SOMETHING
-            </span>
-            <br />
-            EXTRAORDINARY.
+          <h2 className="text-6xl sm:text-8xl md:text-9xl lg:text-[13vw] font-black font-sans uppercase tracking-tight text-white leading-none">
+            LET'S TALK
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg font-mono tracking-widest text-neutral-300 uppercase max-w-xl">
-            Have an idea? Let's turn it into something real.
+          <p className="text-xs sm:text-sm md:text-base font-mono tracking-widest text-neutral-400 uppercase max-w-xl">
+            Have a project or vision? Let's engineer something extraordinary together.
           </p>
+        </motion.div>
 
-          {/* Direct Email Pill Action */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
-            <MagneticButton
-              onClick={copyEmail}
-              dataCursorText="COPY"
-              className="px-6 py-3.5 rounded-full bg-white text-black font-mono text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-all flex items-center gap-2.5 shadow-[0_0_25px_rgba(255,255,255,0.3)]"
+        {/* Horizontal Social & Action Pills Bar (Frame 20 Exact Layout) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-3xl"
+        >
+          {/* Email Copy Pill */}
+          <button
+            type="button"
+            onClick={copyEmail}
+            onMouseEnter={playHover}
+            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-neutral-300 text-xs font-mono tracking-widest uppercase hover:border-white hover:text-white transition-all flex items-center gap-2"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            <span>{copied ? "COPIED" : "EMAIL"}</span>
+          </button>
+
+          {/* LinkedIn Pill */}
+          <a
+            href={PERSONAL_INFO.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            onMouseEnter={playHover}
+            onClick={playClick}
+            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-neutral-300 text-xs font-mono tracking-widest uppercase hover:border-white hover:text-white transition-all flex items-center gap-2"
+          >
+            <LinkedinIcon className="w-3.5 h-3.5" />
+            <span>LINKEDIN</span>
+          </a>
+
+          {/* GitHub Pill */}
+          <a
+            href={PERSONAL_INFO.github}
+            target="_blank"
+            rel="noreferrer"
+            onMouseEnter={playHover}
+            onClick={playClick}
+            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-neutral-300 text-xs font-mono tracking-widest uppercase hover:border-white hover:text-white transition-all flex items-center gap-2"
+          >
+            <GithubIcon className="w-3.5 h-3.5" />
+            <span>GITHUB</span>
+          </a>
+
+          {/* Direct Contact Page Link Button (Glowing Active Pill from Frame 20) */}
+          <MagneticButton
+            href="/contact"
+            onClick={playClick}
+            dataCursorText="OPEN"
+            className="px-7 py-3 rounded-full bg-white text-black text-xs font-mono font-black tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-[0_0_25px_rgba(255,255,255,0.6)] flex items-center gap-2"
+          >
+            <span>CONTACT ME</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </MagneticButton>
+
+          {/* Quick Inline Drawer Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              playClick();
+              setShowQuickForm(!showQuickForm);
+            }}
+            onMouseEnter={playHover}
+            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-neutral-300 text-xs font-mono tracking-widest uppercase hover:border-white hover:text-white transition-all"
+          >
+            {showQuickForm ? "CLOSE FORM" : "QUICK MESSAGE ↓"}
+          </button>
+        </motion.div>
+
+        {/* Quick Inline Message Form Drawer */}
+        <AnimatePresence>
+          {showQuickForm && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="w-full max-w-xl mx-auto overflow-hidden mt-4"
             >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  <span>EMAIL COPIED TO CLIPBOARD</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  <span>COPY: {PERSONAL_INFO.email}</span>
-                </>
-              )}
-            </MagneticButton>
+              <form
+                onSubmit={handleQuickSubmit}
+                className="p-6 sm:p-8 rounded-2xl border border-white/20 bg-neutral-900/90 backdrop-blur-xl flex flex-col gap-4 text-left"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-mono text-neutral-400 uppercase">
+                      NAME *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Your Name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white text-xs font-sans focus:outline-none focus:border-white"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-mono text-neutral-400 uppercase">
+                      EMAIL *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="name@email.com"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className="px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white text-xs font-sans focus:outline-none focus:border-white"
+                    />
+                  </div>
+                </div>
 
-            <MagneticButton
-              href={`mailto:${PERSONAL_INFO.email}`}
-              dataCursorText="MAIL"
-              className="px-6 py-3.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-white font-mono text-xs font-bold tracking-[0.2em] uppercase hover:border-white/50 hover:bg-white/10 transition-colors flex items-center gap-2"
-            >
-              <Mail className="w-4 h-4" />
-              <span>OPEN DIRECT EMAIL</span>
-            </MagneticButton>
-          </div>
-        </div>
-
-        {/* Form & Connect Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-8 border-t border-white/10">
-          {/* Left: Contact Form */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-            <span className="text-xs font-mono tracking-[0.25em] text-neutral-400 uppercase">
-              TRANSMIT A MESSAGE
-            </span>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {/* Name */}
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="name"
-                    className="text-xs font-mono tracking-wider text-neutral-300 uppercase"
-                  >
-                    YOUR NAME *
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-mono text-neutral-400 uppercase">
+                    MESSAGE *
                   </label>
-                  <input
-                    id="name"
-                    type="text"
+                  <textarea
                     required
-                    value={formData.name}
+                    rows={3}
+                    placeholder="Brief outline of your project or inquiry..."
+                    value={formData.message}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({ ...formData, message: e.target.value })
                     }
-                    placeholder="e.g. Alexander Vance"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-neutral-400 text-sm font-sans focus:outline-none focus:border-white focus:bg-white/[0.08] transition-colors"
+                    className="px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white text-xs font-sans focus:outline-none focus:border-white resize-none"
                   />
                 </div>
 
-                {/* Email */}
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="email"
-                    className="text-xs font-mono tracking-wider text-neutral-300 uppercase"
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="submit"
+                    className="px-6 py-2 rounded-full bg-white text-black text-xs font-mono font-bold tracking-widest uppercase hover:bg-neutral-200 transition-colors flex items-center gap-2"
                   >
-                    YOUR EMAIL *
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder="alexander@domain.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-neutral-400 text-sm font-sans focus:outline-none focus:border-white focus:bg-white/[0.08] transition-colors"
-                  />
-                </div>
-              </div>
+                    <span>SEND DISPATCH</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
 
-              {/* Service Selection */}
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="service"
-                  className="text-xs font-mono tracking-wider text-neutral-300 uppercase"
-                >
-                  PROJECT DOMAIN / SERVICE
-                </label>
-                <select
-                  id="service"
-                  value={formData.service}
-                  onChange={(e) =>
-                    setFormData({ ...formData, service: e.target.value })
-                  }
-                  className="w-full px-4 py-3 rounded-xl bg-[#0a0a0c] border border-white/15 text-white text-sm font-sans focus:outline-none focus:border-white transition-colors"
-                >
-                  <option value="Full-Stack Web Development">
-                    Full-Stack Web Development
-                  </option>
-                  <option value="AI-Powered Applications">
-                    AI-Powered Applications
-                  </option>
-                  <option value="RAG-Based AI Solutions">
-                    RAG-Based AI Solutions
-                  </option>
-                  <option value="Business Website Development">
-                    Business Website Development
-                  </option>
-                  <option value="Workflow Automation">
-                    Workflow Automation
-                  </option>
-                  <option value="Modern UI/UX Development">
-                    Modern UI/UX Development
-                  </option>
-                  <option value="Other Exploration">Other Exploration</option>
-                </select>
-              </div>
-
-              {/* Message */}
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="message"
-                  className="text-xs font-mono tracking-wider text-neutral-300 uppercase"
-                >
-                  PROJECT DETAILS / BRIEF *
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
-                  placeholder="Describe your vision, requirements, or goals..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-neutral-400 text-sm font-sans focus:outline-none focus:border-white focus:bg-white/[0.08] transition-colors resize-none"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  onMouseEnter={playHover}
-                  className="px-8 py-3.5 rounded-full bg-white text-black font-mono text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)] disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <span>TRANSMITTING...</span>
-                  ) : (
-                    <>
-                      <span>TRANSMIT DISPATCH</span>
-                      <Send className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-
-                <span className="text-[11px] font-mono text-neutral-400">
-                  CONFIDENTIAL • DIRECT RESPONSE
-                </span>
-              </div>
-
-              {/* Success Notification */}
-              <AnimatePresence>
-                {submitted && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono flex items-center gap-3"
-                  >
-                    <Check className="w-4 h-4 text-emerald-400" />
-                    <span>
-                      Message received! Thank you. I will review and respond shortly.
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </form>
-          </div>
-
-          {/* Right: Direct Information & Social Pills (frame_15 style) */}
-          <div className="lg:col-span-5 flex flex-col justify-between gap-8">
-            <div className="flex flex-col gap-6">
-              <span className="text-xs font-mono tracking-[0.25em] text-neutral-400 uppercase">
-                COORDINATES & CHANNELS
-              </span>
-
-              <div className="flex flex-col gap-4 font-mono text-xs">
-                <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-1">
-                  <span className="text-neutral-400 uppercase">LOCATION</span>
-                  <span className="text-white font-bold">
-                    Hyderabad, India • Available Worldwide
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-1">
-                  <span className="text-neutral-400 uppercase">OFFICIAL EMAIL</span>
                   <a
-                    href={`mailto:${PERSONAL_INFO.email}`}
-                    className="text-white hover:underline font-bold"
+                    href="/contact"
+                    className="text-xs font-mono text-neutral-400 hover:text-white underline"
                   >
-                    {PERSONAL_INFO.email}
+                    Open full contact page →
                   </a>
                 </div>
 
-                <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-1">
-                  <span className="text-neutral-400 uppercase">STATUS</span>
-                  <span className="text-emerald-400 font-bold flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    {PERSONAL_INFO.status}
-                  </span>
-                </div>
-              </div>
-            </div>
+                {submitted && (
+                  <div className="p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono flex items-center gap-2">
+                    <Check className="w-4 h-4" />
+                    <span>Message dispatched successfully!</span>
+                  </div>
+                )}
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-            {/* Social Pills Bar (frame_15 recreation) */}
-            <div className="flex flex-col gap-4 pt-6 border-t border-white/10">
-              <span className="text-xs font-mono tracking-[0.25em] text-neutral-400 uppercase">
-                NETWORKS
-              </span>
-
-              <div className="flex flex-wrap gap-3">
-                <MagneticButton
-                  href={PERSONAL_INFO.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  dataCursorText="LINKEDIN"
-                  className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-xs font-mono tracking-widest uppercase hover:border-white hover:bg-white/10 transition-colors flex items-center gap-2"
-                >
-                  <LinkedinIcon className="w-3.5 h-3.5" />
-                  <span>LINKEDIN</span>
-                </MagneticButton>
-
-                <MagneticButton
-                  href={PERSONAL_INFO.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  dataCursorText="GITHUB"
-                  className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-xs font-mono tracking-widest uppercase hover:border-white hover:bg-white/10 transition-colors flex items-center gap-2"
-                >
-                  <GithubIcon className="w-3.5 h-3.5" />
-                  <span>GITHUB</span>
-                </MagneticButton>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Frame 20 Exact Footer Bar */}
+      <div className="max-w-7xl w-full mx-auto flex items-center justify-between pt-12 border-t border-white/10 text-[10px] sm:text-xs font-mono text-neutral-400">
+        <span className="uppercase tracking-widest">
+          PORTFOLIO // ALL RIGHTS RESERVED
+        </span>
+        <span className="uppercase tracking-widest text-white font-semibold">
+          DESIGN BY JAYAVARDHAN MALAMANTI
+        </span>
       </div>
     </section>
   );
