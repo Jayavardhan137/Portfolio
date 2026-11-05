@@ -104,7 +104,7 @@ export function FeaturedProjectsCarousel() {
     <section
       id="projects"
       data-purpose="featured-projects"
-      className="max-w-[1400px] mx-auto px-6 md:px-14 py-16 bg-[#FAFAFA]"
+      className="max-w-[1400px] mx-auto px-6 md:px-14 py-16 bg-[#FAFAFA] scroll-mt-24 md:scroll-mt-28"
     >
       {/* Header */}
       <div className="mb-8 flex items-end justify-between">

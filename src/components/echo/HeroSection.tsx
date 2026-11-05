@@ -14,7 +14,7 @@ export function HeroSection({ onOpenContact, onSelectService }: HeroSectionProps
     <section
       id="home"
       data-purpose="hero-section"
-      className="relative max-w-[1400px] mx-auto px-6 md:px-14 pt-6 md:pt-12 pb-16 overflow-hidden select-none bg-[#FAFAFA]"
+      className="relative max-w-[1400px] mx-auto px-6 md:px-14 pt-28 md:pt-36 lg:pt-40 pb-16 overflow-hidden select-none bg-[#FAFAFA] scroll-mt-28"
     >
       {/* Big Title Header (Metallic Gradient for PORTFOLIO - ECHO Style) */}
       <div className="text-center w-full mb-6 md:mb-10 relative z-0">

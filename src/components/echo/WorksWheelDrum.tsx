@@ -107,7 +107,7 @@ export function WorksWheelDrum() {
     <section
       id="landing-pages"
       data-purpose="landing-pages-featured-projects"
-      className="max-w-[1400px] mx-auto px-6 md:px-14 py-16 bg-[#FAFAFA] select-none"
+      className="max-w-[1400px] mx-auto px-6 md:px-14 py-16 bg-[#FAFAFA] select-none scroll-mt-24 md:scroll-mt-28"
     >
       {/* Header */}
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">

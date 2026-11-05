@@ -33,10 +33,10 @@ export function Navbar() {
     <>
       <header
         data-purpose="site-navigation"
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 w-full ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full ${
           isScrolled
             ? "py-3 bg-white/90 backdrop-blur-md border-b border-neutral-200/80 shadow-sm"
-            : "pt-6 pb-4 bg-[#FAFAFA]"
+            : "py-4 md:py-6 bg-[#FAFAFA]/90 backdrop-blur-md"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-14 flex items-center justify-between">
@@ -165,7 +165,7 @@ export function Navbar() {
       {/* Mobile Drawer Menu (ECHO Exact Style) */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end">
+          <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex justify-end">
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}

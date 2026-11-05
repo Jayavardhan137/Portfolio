@@ -19,7 +19,7 @@ export function ServicesAccordion({ onInquire }: ServicesAccordionProps) {
     <section
       id="services"
       data-purpose="services-section"
-      className="max-w-[1400px] mx-auto px-6 md:px-14 py-20 bg-[#FAFAFA]"
+      className="max-w-[1400px] mx-auto px-6 md:px-14 py-20 bg-[#FAFAFA] scroll-mt-24 md:scroll-mt-28"
     >
       {/* Centered Header (ECHO index.html exact) */}
       <div className="text-center max-w-2xl mx-auto mb-14">

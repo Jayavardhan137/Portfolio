@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "ngrok": {
+      "type": "http",
+      "url": "https://mcp.ngrok.com/mcp"
+    }
+  }
+}
+

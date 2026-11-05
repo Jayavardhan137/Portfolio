@@ -52,7 +52,7 @@ export function ScrollExpandMedia({ onOpenContact }: ScrollExpandMediaProps) {
     <section
       ref={sectionRef}
       id="about"
-      className="relative w-full bg-[#0D0D0D] text-white"
+      className="relative w-full bg-[#0D0D0D] text-white scroll-mt-24 md:scroll-mt-28"
       style={{ height: "230vh" }}
     >
       {/* Sticky 100dvh Viewport Window */}

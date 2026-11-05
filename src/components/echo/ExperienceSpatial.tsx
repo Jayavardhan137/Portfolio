@@ -39,7 +39,7 @@ export function ExperienceSpatial() {
       ref={sectionRef}
       id="experience"
       data-purpose="experience-section"
-      className="relative w-full bg-[#070709] text-white overflow-visible select-none"
+      className="relative w-full bg-[#070709] text-white overflow-visible select-none scroll-mt-24 md:scroll-mt-28"
       style={{ height: "280vh" }}
     >
       {/* Sticky 100vh Theater / Viewport Window */}
@@ -78,8 +78,8 @@ export function ExperienceSpatial() {
           </div>
         </div>
 
-        {/* Top Minimalist Editorial HUD Bar */}
-        <header className="relative z-30 w-full px-6 md:px-14 pt-6 pb-4 flex items-center justify-between border-b border-white/[0.08] backdrop-blur-md bg-[#070709]/80">
+        {/* Top Minimalist Editorial HUD Bar (positioned cleanly below fixed navbar) */}
+        <header className="relative z-30 w-full px-6 md:px-14 pt-20 md:pt-24 pb-4 flex items-center justify-between border-b border-white/[0.08] backdrop-blur-md bg-[#070709]/80">
           <div className="flex items-center gap-4">
             <span className="text-[11px] font-semibold tracking-widest uppercase text-neutral-400 font-mono">
               {isFreelance ? "FREELANCE / INDEPENDENT" : "B.TECH CSE & SELF-DIRECTED LEARNING"}
