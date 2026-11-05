@@ -12,8 +12,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
-    const duration = 1600;
-    const interval = 20;
+    const duration = 450;
+    const interval = 15;
     const steps = duration / interval;
     let currentStep = 0;
 
@@ -27,7 +27,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         setTimeout(() => {
           setIsFinished(true);
           if (onComplete) onComplete();
-        }, 300);
+        }, 150);
       }
     }, interval);
 

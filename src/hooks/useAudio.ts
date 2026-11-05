@@ -106,6 +106,29 @@ export function useAudio() {
     }
   }, [isEnabled, getAudioContext]);
 
-  return { isEnabled, toggleSound, playHover, playClick, playCinematicRise };
+  // Pendulum mechanical metronome tick
+  const playPendulumTick = useCallback((pitchMultiplier = 1) => {
+    if (!isEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      const baseFreq = 520 * pitchMultiplier;
+      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.4, ctx.currentTime + 0.045);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.045);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.045);
+    } catch {
+      // Ignore audio failures
+    }
+  }, [isEnabled, getAudioContext]);
+
+  return { isEnabled, toggleSound, playHover, playClick, playCinematicRise, playPendulumTick };
 }
 

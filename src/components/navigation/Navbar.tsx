@@ -35,8 +35,8 @@ export function Navbar() {
         data-purpose="site-navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full ${
           isScrolled
-            ? "py-3 bg-white/90 backdrop-blur-md border-b border-neutral-200/80 shadow-sm"
-            : "py-4 md:py-6 bg-[#FAFAFA]/90 backdrop-blur-md"
+            ? "py-3 bg-black/85 backdrop-blur-md border-b border-white/10 shadow-lg"
+            : "py-4 md:py-6 bg-transparent"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-14 flex items-center justify-between">
@@ -45,14 +45,14 @@ export function Navbar() {
             href="#home"
             onMouseEnter={playHover}
             onClick={playClick}
-            className="group font-black text-xl tracking-tight text-black flex items-center select-none"
+            className="group font-black text-xl tracking-tight text-white flex items-center select-none"
           >
             <span>{PERSONAL_INFO.shortName}</span>
-            <span className="inline-block w-2 h-2 bg-black rounded-full ml-1 transition-transform group-hover:scale-150 duration-200" />
+            <span className="inline-block w-2 h-2 bg-white rounded-full ml-1 transition-transform group-hover:scale-150 duration-200" />
           </a>
 
-          {/* Center Navigation Links: Pill with no unwanted wrapping (ECHO Exact Style) */}
-          <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/95 border border-[#E2E2E2] rounded-full shadow-sm text-xs font-semibold tracking-wider text-neutral-600">
+          {/* Center Navigation Links: Dark Glass Pill */}
+          <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.08] backdrop-blur-md border border-white/15 rounded-full shadow-sm text-xs font-semibold tracking-wider text-neutral-300">
             {NAV_ITEMS.map((item, idx) => (
               <a
                 key={item.label}
@@ -62,8 +62,8 @@ export function Navbar() {
                 onClick={playClick}
                 className={`px-4 py-2 rounded-full border transition whitespace-nowrap ${
                   idx === 0
-                    ? "border-neutral-300 text-black hover:border-black"
-                    : "border-transparent hover:border-neutral-200 hover:text-black"
+                    ? "border-white/30 text-white bg-white/10 hover:border-white"
+                    : "border-transparent hover:border-white/20 hover:text-white"
                 }`}
               >
                 {item.label}
@@ -71,11 +71,11 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Right Social & Menu Links (ECHO Exact Layout) */}
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 bg-white/95 border border-[#E2E2E2] rounded-full shadow-sm">
+          {/* Right Social & Menu Links */}
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 bg-white/[0.08] backdrop-blur-md border border-white/15 rounded-full shadow-sm text-neutral-300">
             {/* Instagram */}
             <a
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 hover:text-white"
               href="https://www.instagram.com/"
               target="_blank"
               rel="noopener noreferrer"
@@ -90,7 +90,7 @@ export function Navbar() {
 
             {/* Twitter / X */}
             <a
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 hover:text-white"
               href="https://x.com/"
               target="_blank"
               rel="noopener noreferrer"
@@ -103,7 +103,7 @@ export function Navbar() {
 
             {/* LinkedIn */}
             <a
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 hover:text-white"
               href={PERSONAL_INFO.linkedin}
               target="_blank"
               rel="noopener noreferrer"
@@ -114,7 +114,7 @@ export function Navbar() {
 
             {/* GitHub */}
             <a
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 hover:text-white"
               href={PERSONAL_INFO.github}
               target="_blank"
               rel="noopener noreferrer"
@@ -130,10 +130,10 @@ export function Navbar() {
                 playClick();
                 toggleSound();
               }}
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 hover:text-white"
               title={isSoundOn ? "Sound On" : "Sound Off"}
             >
-              {isSoundOn ? <Volume2 className="w-3.5 h-3.5 text-black animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
+              {isSoundOn ? <Volume2 className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
             </button>
 
             {/* Contact Page Link Pill */}
@@ -141,7 +141,7 @@ export function Navbar() {
               href="/contact"
               onMouseEnter={playHover}
               onClick={playClick}
-              className="px-3.5 py-1.5 rounded-full bg-black text-white text-[11px] font-mono tracking-wider font-semibold hover:bg-neutral-800 transition shadow-sm ml-1 hidden sm:inline-block"
+              className="px-3.5 py-1.5 rounded-full bg-white text-black text-[11px] font-mono tracking-wider font-semibold hover:bg-neutral-200 transition shadow-sm ml-1 hidden sm:inline-block"
             >
               CONTACT
             </a>
@@ -154,7 +154,7 @@ export function Navbar() {
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
               aria-label="Open Menu"
-              className="lg:hidden w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 ml-1"
+              className="lg:hidden w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/15 transition text-neutral-300 ml-1"
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>

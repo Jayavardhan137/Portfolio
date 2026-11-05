@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CinematicLoader } from "@/components/ui/CinematicLoader";
 import { Navbar } from "@/components/navigation/Navbar";
-import { HeroSection } from "@/components/echo/HeroSection";
+import { PendulumHero } from "@/components/echo/PendulumHero";
 import { ScrollExpandMedia } from "@/components/echo/ScrollExpandMedia";
 import { ExperienceSpatial } from "@/components/echo/ExperienceSpatial";
 import { FeaturedProjectsCarousel } from "@/components/echo/FeaturedProjectsCarousel";
@@ -25,18 +25,12 @@ export default function Home() {
       {/* Orbital ECHO Preloader */}
       <CinematicLoader />
 
-      <main className="relative min-h-screen bg-[#FAFAFA] text-[#121212] flex flex-col selection:bg-black selection:text-white">
+      <main className="relative min-h-screen bg-[#050507] text-white flex flex-col selection:bg-white selection:text-black">
         {/* Navigation Bar */}
         <Navbar />
 
-        {/* Hero Section */}
-        <HeroSection
-          onOpenContact={() => openContact()}
-          onSelectService={(idx) => {
-            const services = ["UI/UX", "Web Design", "Landing Page Design", "AI-Powered Applications"];
-            openContact(services[idx] || "Landing Page Design");
-          }}
-        />
+        {/* Cinematic Kinetic Pendulum Hero Section (ADITHYA Reference Video Exact Architecture) */}
+        <PendulumHero />
 
         {/* About Section: ScrollExpandMedia Kinetic Canvas */}
         <ScrollExpandMedia onOpenContact={() => openContact()} />
