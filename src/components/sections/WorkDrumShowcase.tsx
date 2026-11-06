@@ -13,12 +13,12 @@ export function WorkDrumShowcase() {
 
   // 6 drum positions (60 deg each for hexagon wheel like frame_10)
   const items = [
-    { title: "QFLOW AI", sub: "Queue Platform", type: "01", tag: "AI SYSTEM" },
-    { title: "STUDYASSISTANT", sub: "RAG Assistant", type: "02", tag: "RAG • LLM" },
-    { title: "AI VOICE DISPATCH", sub: "Speech Pipeline", type: "03", tag: "AUDIO AI" },
-    { title: "QR ENGINE CORE", sub: "Real-Time Sync", type: "04", tag: "FULL STACK" },
-    { title: "VECTOR RETRIEVAL", sub: "ChromaDB Store", type: "05", tag: "KNOWLEDGE" },
-    { title: "ADMIN DASHBOARD", sub: "Operational UI", type: "06", tag: "FRONTEND" },
+    { title: "QUEUEFLOW AI", sub: "Cloud Platform", type: "01", tag: "AI SYSTEM" },
+    { title: "QR TOKEN ENGINE", sub: "Instant Check-in", type: "02", tag: "QR ENGINE" },
+    { title: "LIVE TELEMETRY", sub: "Real-time Tracker", type: "03", tag: "ACTIVE TICKET" },
+    { title: "AI ANNOUNCER", sub: "Voice Notification", type: "04", tag: "AUDIO AI" },
+    { title: "MULTI-TENANT", sub: "Org Management", type: "05", tag: "ENTERPRISE" },
+    { title: "ADMIN CONSOLE", sub: "Queue Control UI", type: "06", tag: "DASHBOARD" },
   ];
 
   const rotateDrum = (direction: 1 | -1) => {

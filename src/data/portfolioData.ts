@@ -77,73 +77,42 @@ export const PERSONAL_INFO = {
 
 export const PROJECTS: Project[] = [
   {
-    id: "qflow-ai",
+    id: "queueflow-ai",
     number: "01",
-    title: "QFLOW AI",
-    tagline: "Intelligent Queue Management Platform",
-    category: "AI SYSTEM • FULL-STACK PLATFORM",
-    description: "An intelligent queue management platform engineered for high-throughput environments including hospitals, banks, supermarkets, and public service organizations to eliminate physical bottlenecks.",
+    title: "QUEUEFLOW AI",
+    tagline: "Universal Smart Queue Management Platform",
+    category: "AI SYSTEM • FULL-STACK CLOUD PLATFORM",
+    description: "A smart QR-based queue management platform for hospitals, banks, supermarkets, clinics, restaurants, colleges, and enterprise businesses to eliminate physical waiting lines.",
     features: [
-      "QR-based token booking",
-      "Real-time queue tracking",
-      "Admin dashboard",
-      "Estimated waiting time",
-      "AI-powered voice notifications",
-      "Token rescheduling"
+      "QR-based instant token booking",
+      "Real-time live queue progression tracking",
+      "Multi-organization registration & tenant management",
+      "Live active ticket tracker interface",
+      "Estimated waiting time algorithm",
+      "AI-powered voice notifications & announcements",
+      "Token rescheduling & customer priority routing"
     ],
     technologies: [
       "Next.js",
       "React",
+      "TypeScript",
       "Node.js",
+      "Tailwind CSS",
       "Supabase",
       "AI Voice Synthesis",
-      "REST APIs",
-      "Tailwind CSS"
+      "QR Generation Core",
+      "Vercel"
     ],
     metrics: [
       { label: "Deployment", value: "Multi-Org Architecture" },
-      { label: "Updates", value: "Real-Time Sync" },
+      { label: "Wait Reduction", value: "Zero Physical Bottlenecks" },
       { label: "Interface", value: "QR & Voice First" }
     ],
-    liveUrl: "https://github.com/Jayavardhan137",
+    liveUrl: "https://queue-management-system-vert-iota.vercel.app/",
     githubUrl: "https://github.com/Jayavardhan137",
-    previewImage: "/projects/qflow.svg",
+    previewImage: "/projects/queueflow-ai.png",
     visualType: "queue",
-    accentColor: "#ffffff"
-  },
-  {
-    id: "studyassistant",
-    number: "02",
-    title: "STUDYASSISTANT",
-    tagline: "AI-Powered Learning Assistant via RAG",
-    category: "GENERATIVE AI • RAG ARCHITECTURE",
-    description: "An intelligent learning copilot built using Retrieval-Augmented Generation (RAG) that ingests academic literature and documents to synthesize contextual, fact-grounded tutoring across multiple dynamic AI personalities.",
-    features: [
-      "Document-based question answering",
-      "Context-aware responses",
-      "Multiple AI personalities",
-      "LLM integration",
-      "Knowledge retrieval"
-    ],
-    technologies: [
-      "Python",
-      "RAG Architecture",
-      "LangChain",
-      "ChromaDB",
-      "Hugging Face",
-      "LLM Integrations",
-      "Next.js"
-    ],
-    metrics: [
-      { label: "Retrieval", value: "Vector Embedding" },
-      { label: "Personas", value: "Adaptive Tone" },
-      { label: "Grounding", value: "Zero Hallucination" }
-    ],
-    liveUrl: "https://github.com/Jayavardhan137",
-    githubUrl: "https://github.com/Jayavardhan137",
-    previewImage: "/projects/studyassistant.svg",
-    visualType: "rag",
-    accentColor: "#f4f4f5"
+    accentColor: "#9333ea"
   }
 ];
 

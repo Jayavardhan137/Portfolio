@@ -19,70 +19,32 @@ interface ProjectItem {
 
 const ALL_PROJECTS: ProjectItem[] = [
   {
-    src: "/projects/Portfolio Design.png",
-    alt: "QFLOW AI",
-    title: "QFLOW AI",
-    subtitle: "Intelligent Queue Management Platform",
-    description: "An intelligent queue management platform engineered for hospitals, banks, supermarkets, and public service organizations to eliminate physical bottlenecks with QR tokens, real-time queues, and AI-powered voice announcements.",
-    category: "AI SYSTEM • FULL-STACK",
-    link: "https://github.com/Jayavardhan137",
-    tools: ["Next.js", "React", "Node.js", "Supabase", "AI Voice Synthesis", "Tailwind CSS"],
-    deliverables: ["QR Token Booking", "Real-Time Queue Tracking", "Estimated Wait Time", "AI Voice Notifications", "Admin Dashboard"]
-  },
-  {
-    src: "/projects/Portfolio Website.png",
-    alt: "STUDYASSISTANT",
-    title: "STUDYASSISTANT",
-    subtitle: "RAG-Powered Intelligent Learning Assistant",
-    description: "An AI-powered learning assistant built using Retrieval-Augmented Generation that ingests academic literature and documents to synthesize contextual, fact-grounded tutoring across multiple dynamic AI personalities.",
-    category: "GENERATIVE AI • RAG PIPELINE",
-    link: "https://github.com/Jayavardhan137",
-    tools: ["Python", "LangChain", "ChromaDB", "Hugging Face", "LLM APIs", "FastAPI"],
-    deliverables: ["Document-Based Question Answering", "Context-Aware Retrieval", "Multiple AI Personalities", "Vector Embeddings Store"]
-  },
-  {
-    src: "/projects/Photographer Portfolio.png",
-    alt: "Photographer Portfolio",
-    title: "Julian Vance Photography",
-    subtitle: "Editorial & Analog Photography Archive",
-    description: "An analog & editorial photography portfolio showcasing timeless visual stories, high-contrast imagery, and editorial typography.",
-    category: "EDITORIAL • CREATIVE WEB",
-    link: "https://julianvance.vercel.app/",
-    tools: ["Next.js", "Tailwind CSS", "Framer Motion", "Lenis Scroll"],
-    deliverables: ["Full Responsive Web Design", "Visual Monograph Experience", "High-Resolution Image System"]
-  },
-  {
-    src: "/projects/Design Studio.png",
-    alt: "Design Studio",
-    title: "Design Studio",
-    subtitle: "Creative Agency & Brand Identity",
-    description: "A bold design studio website built to showcase creative services, brand identity, and experimental digital experiences.",
-    category: "BRAND & DESIGN",
-    link: "https://echo-design-studio-ex.vercel.app/",
-    tools: ["React", "TypeScript", "Tailwind CSS", "WebGL"],
-    deliverables: ["Interactive Portfolio", "Brand Guidelines", "Fluid Spatial Layout"]
-  },
-  {
-    src: "/projects/Cafe Website.png",
-    alt: "Cafe Website",
-    title: "Mocha & Miso",
-    subtitle: "Editorial Coffee House & Reservation System",
-    description: "A full-stack cafe management system with customer-facing table booking, live menus, and admin reservation portal.",
-    category: "FULL-STACK WEB",
-    link: "https://mochaandmiso.web.app/",
-    tools: ["React", "Firebase", "Node.js", "Tailwind CSS"],
-    deliverables: ["Table Reservation Portal", "Order Processing", "Admin Menu Management"]
-  },
-  {
-    src: "/projects/Sen Cruzo-Client Portfolio.png",
-    alt: "Sen Cruzo",
-    title: "Sen Cruzo",
-    subtitle: "Luxury Architectural & Client Portfolio",
-    description: "A bespoke editorial portfolio designed for high-profile client presentation, featuring immersive layouts and architectural visual storytelling.",
-    category: "LUXURY ARCHITECTURE",
-    link: "https://sencruzo.web.app/",
-    tools: ["Next.js", "Tailwind CSS", "GSAP", "Lenis"],
-    deliverables: ["Spatial Storytelling", "High-Fidelity Lookbook", "Client Presentation"]
+    src: "/projects/queueflow-ai.png",
+    alt: "QueueFlow AI - Universal Smart Queue Management Platform",
+    title: "QueueFlow AI",
+    subtitle: "Universal Smart Queue Management Platform",
+    description: "A smart QR-based queue management platform for hospitals, banks, supermarkets, clinics, restaurants, colleges, and every business. Skip the queue and arrive when it's your turn with real-time ticket tracking, instant QR bookings, multi-organization tenant registration, and AI-powered voice announcements.",
+    category: "AI SYSTEM • FULL-STACK CLOUD PLATFORM",
+    link: "https://queue-management-system-vert-iota.vercel.app/",
+    tools: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Node.js",
+      "Supabase",
+      "AI Voice Synthesis",
+      "QR Generation Core",
+      "Vercel"
+    ],
+    deliverables: [
+      "QR-Based Instant Token Booking",
+      "Live Active Ticket Tracking Portal",
+      "Multi-Organization Registration System",
+      "Dynamic Estimated Waiting Time Engine",
+      "AI Voice Notifications & Audio Cues",
+      "Comprehensive Admin Queue Dashboard"
+    ]
   }
 ];
 
@@ -117,24 +79,38 @@ export function FeaturedProjectsCarousel() {
           </span>
         </div>
 
-        {/* Arrow controls */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={prevItem}
-            className="w-10 h-10 rounded-full border border-neutral-300 bg-white flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition-all shadow-sm"
-            aria-label="Previous project"
+        {/* Direct Link & Controls */}
+        <div className="flex items-center gap-3">
+          <a
+            href={current.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-full border border-neutral-300 bg-white text-xs font-mono font-bold tracking-widest uppercase hover:border-black hover:text-black transition-all shadow-sm hidden sm:inline-flex items-center gap-1.5"
           >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={nextItem}
-            className="w-10 h-10 rounded-full border border-neutral-300 bg-white flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition-all shadow-sm"
-            aria-label="Next project"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+            <span>LAUNCH APP</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+
+          {ALL_PROJECTS.length > 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={prevItem}
+                className="w-10 h-10 rounded-full border border-neutral-300 bg-white flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition-all shadow-sm"
+                aria-label="Previous project"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={nextItem}
+                className="w-10 h-10 rounded-full border border-neutral-300 bg-white flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition-all shadow-sm"
+                aria-label="Next project"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -144,12 +120,12 @@ export function FeaturedProjectsCarousel() {
         className="w-full rounded-3xl border border-neutral-200 bg-[#EFEFEF] overflow-hidden shadow-inner cursor-pointer relative group transition-all duration-300 hover:border-neutral-400"
         style={{ minHeight: "520px" }}
       >
-        <div className="relative w-full h-[520px] flex items-center justify-center p-6 md:p-12 overflow-hidden bg-neutral-950">
+        <div className="relative w-full h-[520px] flex items-center justify-center p-4 md:p-8 overflow-hidden bg-[#07070b]">
           {/* Background image preview with organic curvature */}
           <img
             src={current.src}
             alt={current.alt}
-            className="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500 rounded-2xl"
+            className="w-full h-full object-contain md:object-cover object-center group-hover:scale-[1.02] transition-all duration-500 rounded-2xl"
           />
 
           {/* Vignette Overlay */}
@@ -170,8 +146,19 @@ export function FeaturedProjectsCarousel() {
             </div>
 
             <div className="flex items-center gap-3 pointer-events-auto">
+              <a
+                href={current.link}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="px-4 py-2 rounded-full border border-white/30 bg-black/60 backdrop-blur-md text-white text-xs font-mono font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all flex items-center gap-1.5"
+              >
+                <span>OPEN LIVE</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+
               <span className="px-4 py-2 rounded-full bg-white text-black text-xs font-mono font-bold tracking-widest uppercase shadow-lg group-hover:bg-neutral-200 transition-colors">
-                CLICK TO INSPECT ↗
+                INSPECT ↗
               </span>
             </div>
           </div>
@@ -260,7 +247,7 @@ export function FeaturedProjectsCarousel() {
                   rel="noreferrer"
                   className="px-6 py-2.5 rounded-full bg-black text-white text-xs font-mono font-bold tracking-widest uppercase hover:bg-neutral-800 transition-colors flex items-center gap-2"
                 >
-                  <span>LIVE REPO / SITE</span>
+                  <span>LIVE PLATFORM</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
