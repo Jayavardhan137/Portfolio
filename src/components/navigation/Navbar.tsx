@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Volume2, VolumeX, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { useAudio } from "@/hooks/useAudio";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
@@ -122,24 +122,9 @@ export function Navbar() {
               <GithubIcon className="w-4 h-4" />
             </a>
 
-            {/* Audio Toggle */}
-            <button
-              type="button"
-              onClick={() => {
-                playClick();
-                toggleSound();
-              }}
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 transition text-neutral-700 hover:text-black"
-              title={isSoundOn ? "Sound On" : "Sound Off"}
-            >
-              {isSoundOn ? <Volume2 className="w-3.5 h-3.5 text-black animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
-            </button>
-
             {/* Contact Page Link Pill */}
             <a
               href="/contact"
-              onMouseEnter={playHover}
-              onClick={playClick}
               className="px-3.5 py-1.5 rounded-full bg-black text-white text-[11px] font-mono tracking-wider font-semibold hover:bg-neutral-800 transition shadow-sm ml-1 hidden sm:inline-block"
             >
               CONTACT
