@@ -58,6 +58,95 @@ html {
   -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
 }
 
+/* Cinematic Morph Preloader Typography & Stage */
+.loader-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 520px;
+  height: 520px;
+  margin: -260px 0 0 -260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(170, 180, 255, 0.55) 0%, rgba(120, 130, 220, 0.18) 35%, transparent 68%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 18px 6px rgba(190, 200, 255, 0.9);
+  opacity: 0;
+}
+
+.loader-stem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 0;
+  margin-left: -5px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 0 18px 5px rgba(190, 200, 255, 0.8);
+  transform-origin: 50% 100%;
+  opacity: 0;
+}
+
+.loader-word {
+  position: relative;
+  display: flex;
+  font-family: 'Archivo Black', 'Inter', Impact, sans-serif;
+  font-size: clamp(34px, 10.5vw, 120px);
+  letter-spacing: .01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.loader-l {
+  display: inline-block;
+  overflow: visible;
+  background: linear-gradient(180deg, #fff 0%, #fff 32%, #8b8e98 62%, #3b3d45 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  will-change: transform;
+}
+
+.loader-sub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: clamp(34px, 7vw, 80px);
+  transform: translateX(-50%);
+  width: min(90vw, var(--w, 600px));
+  font: 700 clamp(12px, 2.4vw, 20px)/1 'Inter', sans-serif;
+  color: #fff;
+  opacity: 0;
+}
+
+.loader-sub i {
+  font-weight: 500;
+  font-style: italic;
+}
+
 /* Footer Metallic Title */
 .footer-metallic-title {
   background: linear-gradient(180deg, #FFFFFF 0%, #a8a8a8 50%, #444444 100%);
