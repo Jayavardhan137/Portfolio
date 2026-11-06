@@ -35,9 +35,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         audioCtxRef.current = new AudioCtxClass();
       }
     }
-    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume().catch(() => {});
-    }
     return audioCtxRef.current;
   }, []);
 
@@ -248,7 +245,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       });
     }
 
-    // Pre-decode key samples
+    // Ensure audio clips are decoded and ready
     await loadKeys();
 
     const L = build(FROM);
@@ -418,44 +415,50 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     finish();
   }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
-  const startExperience = useCallback(() => {
+  const startExperience = useCallback(async () => {
     if (hasStarted) return;
     setHasStarted(true);
-    getAudioContext();
-    loadKeys();
+
+    const a = getAudioContext();
+    if (a && a.state === "suspended") {
+      try {
+        await a.resume();
+      } catch (e) {}
+    }
+
+    await loadKeys();
     play();
   }, [getAudioContext, hasStarted, loadKeys, play]);
 
-  // Check if browser allows immediate autoplay; otherwise await first interaction
+  // Handle single tap anywhere on screen to unlock audio and trigger intro
   useEffect(() => {
     const a = getAudioContext();
+    // If browser already has active audio authorization (e.g. returning visitor with MEI), start automatically
     if (a && a.state === "running") {
-      // Browser already allows sound! Start immediately.
       startExperience();
-    } else {
-      // Browser starts suspended: trigger on any user interaction immediately
-      const handleUserGesture = () => {
-        startExperience();
-      };
-
-      window.addEventListener("pointerdown", handleUserGesture, { once: true });
-      window.addEventListener("touchstart", handleUserGesture, { once: true });
-      window.addEventListener("click", handleUserGesture, { once: true });
-      window.addEventListener("keydown", handleUserGesture, { once: true });
-
-      // Fallback timer: if visitor doesn't touch the screen within 2.5s, autoplay visually so they don't get stuck
-      const timer = setTimeout(() => {
-        startExperience();
-      }, 2500);
-
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener("pointerdown", handleUserGesture);
-        window.removeEventListener("touchstart", handleUserGesture);
-        window.removeEventListener("click", handleUserGesture);
-        window.removeEventListener("keydown", handleUserGesture);
-      };
+      return;
     }
+
+    const onUserGesture = () => {
+      startExperience();
+    };
+
+    window.addEventListener("pointerdown", onUserGesture, { once: true });
+    window.addEventListener("touchstart", onUserGesture, { once: true });
+    window.addEventListener("click", onUserGesture, { once: true });
+    window.addEventListener("keydown", onUserGesture, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", onUserGesture);
+      window.removeEventListener("touchstart", onUserGesture);
+      window.removeEventListener("click", onUserGesture);
+      window.removeEventListener("keydown", onUserGesture);
+      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
+        try {
+          audioCtxRef.current.close();
+        } catch (e) {}
+      }
+    };
   }, [getAudioContext, startExperience]);
 
   return (
@@ -502,12 +505,17 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             </div>
           </div>
 
-          {/* Elegant Prompt if waiting for user gesture to unlock audio */}
+          {/* Centered / Bottom Tap-To-Enter Prompt */}
           {!hasStarted && (
-            <div className="absolute bottom-16 left-0 right-0 z-50 flex justify-center pointer-events-none">
-              <span className="text-[11px] font-mono tracking-[0.3em] text-neutral-400 uppercase animate-pulse">
-                TAP ANYWHERE TO ENTER ↗
-              </span>
+            <div className="absolute inset-0 z-40 flex flex-col items-center justify-center pointer-events-none">
+              <div className="flex flex-col items-center gap-4 mt-40">
+                <div className="w-14 h-14 rounded-full border border-white/25 bg-white/[0.08] backdrop-blur-md flex items-center justify-center text-white text-base shadow-[0_0_30px_rgba(190,200,255,0.35)] animate-pulse">
+                  ▶
+                </div>
+                <span className="text-[12px] font-mono tracking-[0.25em] text-neutral-300 uppercase">
+                  TAP ANYWHERE TO ENTER
+                </span>
+              </div>
             </div>
           )}
 
