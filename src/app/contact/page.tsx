@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { PERSONAL_INFO, SERVICES } from "@/data/portfolioData";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
+import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/ui/Icons";
 import { useAudio } from "@/hooks/useAudio";
 
 function ContactPageContent() {
@@ -378,6 +378,20 @@ function ContactPageContent() {
               </span>
 
               <div className="flex flex-col gap-3 font-mono text-xs">
+                <a
+                  href={PERSONAL_INFO.twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                  onMouseEnter={playHover}
+                  className="flex items-center justify-between p-3 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/30 text-white transition-all group"
+                >
+                  <div className="flex items-center gap-3">
+                    <TwitterIcon className="w-4 h-4 text-neutral-300 group-hover:text-white" />
+                    <span>X (TWITTER) // @Jayavardhan8141</span>
+                  </div>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white" />
+                </a>
+
                 <a
                   href={PERSONAL_INFO.linkedin}
                   target="_blank"

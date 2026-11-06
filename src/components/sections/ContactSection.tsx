@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
+import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/ui/Icons";
 import { useAudio } from "@/hooks/useAudio";
 
 export function ContactSection() {
@@ -94,6 +94,19 @@ export function ContactSection() {
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? "COPIED" : "EMAIL"}</span>
           </button>
+
+          {/* Twitter / X Pill */}
+          <a
+            href={PERSONAL_INFO.twitter}
+            target="_blank"
+            rel="noreferrer"
+            onMouseEnter={playHover}
+            onClick={playClick}
+            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-neutral-300 text-xs font-mono tracking-widest uppercase hover:border-white hover:text-white transition-all flex items-center gap-2"
+          >
+            <TwitterIcon className="w-3.5 h-3.5" />
+            <span>X (TWITTER)</span>
+          </a>
 
           {/* LinkedIn Pill */}
           <a

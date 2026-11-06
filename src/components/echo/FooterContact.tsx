@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { X, Send, Check } from "lucide-react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
+import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/ui/Icons";
 
 interface FooterContactProps {
   isModalOpen?: boolean;
@@ -69,21 +69,13 @@ export function FooterContact({
           {/* Action Button Pills */}
           <div className="flex flex-wrap items-center justify-center gap-3.5 mt-8 mb-20 font-mono text-xs">
             <a
-              href="https://www.instagram.com/"
+              href={PERSONAL_INFO.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-2.5 rounded-full border border-neutral-700 hover:border-neutral-400 font-medium tracking-wider uppercase transition text-neutral-300 hover:text-white"
+              className="px-6 py-2.5 rounded-full border border-neutral-700 hover:border-neutral-400 font-medium tracking-wider uppercase transition text-neutral-300 hover:text-white flex items-center gap-1.5"
             >
-              INSTAGRAM
-            </a>
-
-            <a
-              href="https://x.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-2.5 rounded-full border border-neutral-700 hover:border-neutral-400 font-medium tracking-wider uppercase transition text-neutral-300 hover:text-white"
-            >
-              TWITTER
+              <TwitterIcon className="w-3.5 h-3.5" />
+              <span>X (TWITTER)</span>
             </a>
 
             <a

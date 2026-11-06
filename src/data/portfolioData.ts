@@ -55,6 +55,7 @@ export const PERSONAL_INFO = {
   email: "jayavardhanmalmanti143@gmail.com",
   linkedin: "https://www.linkedin.com/in/jayavardhan-malamanti-000011380",
   github: "https://github.com/Jayavardhan137",
+  twitter: "https://x.com/Jayavardhan8141",
   bioHeadline: "CURIOUS MIND. CREATIVE THINKER. TECHNOLOGY BUILDER.",
   bioParagraphs: [
     "I'm Jayavardhan, a Computer Science student specializing in AI & Machine Learning. I enjoy transforming complex problems into useful digital experiences through software development, artificial intelligence, and creative experimentation.",
