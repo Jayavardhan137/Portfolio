@@ -10,7 +10,6 @@ interface CinematicLoaderProps {
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +22,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const keyBuffersRef = useRef<AudioBuffer[]>([]);
   const lastKeyIdxRef = useRef<number>(-1);
-  const ambRef = useRef<{ out: GainNode; nodes: any[] } | null>(null);
 
   // Audio Context getter
   const getAudioContext = useCallback(() => {
@@ -38,83 +36,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     }
     return audioCtxRef.current;
   }, []);
-
-  // Ambient sound synthesis
-  const stopAmb = useCallback((fade = 1.2) => {
-    const amb = ambRef.current;
-    if (!amb) return;
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      const o = amb.out;
-      o.gain.cancelScheduledValues(t);
-      o.gain.setValueAtTime(Math.max(o.gain.value, 0.0001), t);
-      o.gain.exponentialRampToValueAtTime(0.0001, t + fade);
-      amb.nodes.forEach((x) => {
-        try {
-          x.stop(t + fade + 0.1);
-        } catch (e) {}
-      });
-    } catch (e) {}
-    ambRef.current = null;
-  }, [getAudioContext]);
-
-  const ambient = useCallback(() => {
-    stopAmb(0.4);
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      const out = a.createGain();
-      out.gain.setValueAtTime(0.0001, t);
-      out.gain.exponentialRampToValueAtTime(0.22, t + 2);
-      out.connect(a.destination);
-
-      const lp = a.createBiquadFilter();
-      lp.type = "lowpass";
-      lp.frequency.value = 260;
-      lp.Q.value = 2;
-      lp.connect(out);
-
-      const nodes: any[] = [55, 55.5, 82.4].map((f, i) => {
-        const o = a.createOscillator();
-        const g = a.createGain();
-        o.type = i < 2 ? "sawtooth" : "sine";
-        o.frequency.value = f;
-        g.gain.value = i < 2 ? 0.18 : 0.12;
-        o.connect(g).connect(lp);
-        o.start(t);
-        return o;
-      });
-
-      const lfo = a.createOscillator();
-      const lg = a.createGain();
-      lfo.frequency.value = 0.12;
-      lg.gain.value = 90;
-      lfo.connect(lg).connect(lp.frequency);
-      lfo.start(t);
-      nodes.push(lfo);
-
-      const nb = a.createBuffer(1, a.sampleRate * 2, a.sampleRate);
-      const d = nb.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-      const ns = a.createBufferSource();
-      ns.buffer = nb;
-      ns.loop = true;
-      const bp = a.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.frequency.value = 900;
-      bp.Q.value = 0.6;
-      const ng = a.createGain();
-      ng.gain.value = 0.035;
-      ns.connect(bp).connect(ng).connect(out);
-      ns.start(t);
-      nodes.push(ns);
-
-      ambRef.current = { out, nodes };
-    } catch (e) {}
-  }, [getAudioContext, stopAmb]);
 
   // Whoosh sound
   const whoosh = useCallback((vol = 1) => {
@@ -141,7 +62,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     } catch (e) {}
   }, [getAudioContext]);
 
-  // Boom sound
+  // Boom sub-bass impact
   const boom = useCallback(() => {
     try {
       const a = getAudioContext();
@@ -160,28 +81,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       o.stop(t + 1.2);
     } catch (e) {}
   }, [getAudioContext]);
-
-  // Chime sound
-  const chime = useCallback(() => {
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      [880, 1318.5, 1760].forEach((f, i) => {
-        const o = a.createOscillator();
-        const g = a.createGain();
-        o.type = "triangle";
-        o.frequency.value = f;
-        g.gain.setValueAtTime(0.0001, t + i * 0.09);
-        g.gain.exponentialRampToValueAtTime(0.13, t + i * 0.09 + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.09 + 1.5);
-        o.connect(g).connect(a.destination);
-        o.start(t + i * 0.09);
-        o.stop(t + i * 0.09 + 1.6);
-      });
-      boom();
-    } catch (e) {}
-  }, [getAudioContext, boom]);
 
   // Bounce sound
   const bounce = useCallback((vol = 1, f = 170) => {
@@ -273,10 +172,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   const finish = useCallback(() => {
     runIdRef.current++;
-    stopAmb(0.5);
     setIsFinished(true);
     if (onComplete) onComplete();
-  }, [onComplete, stopAmb]);
+  }, [onComplete]);
 
   // Main playback routine
   const play = useCallback(async () => {
@@ -290,8 +188,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
     const id = ++runIdRef.current;
     const live = () => id === runIdRef.current && !isFinished;
-
-    ambient();
 
     [dot, stem, glow, sub].forEach((e) => {
       if (!e) return;
@@ -485,10 +381,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     sub.style.setProperty("--w", w.width + "px");
     sub.style.textAlign = "left";
 
-    setTimeout(() => {
-      if (live()) stopAmb(3);
-    }, 2500);
-
     anim(
       sub,
       [
@@ -499,37 +391,39 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     );
 
     // 6. Transition into portfolio
-    await wait(2800);
+    await wait(2400);
     if (!live()) return;
     finish();
-  }, [ambient, bounce, boom, finish, isFinished, keySound, stopAmb, whoosh]);
+  }, [bounce, boom, finish, isFinished, keySound, whoosh]);
 
-  const handleStart = useCallback(() => {
-    getAudioContext();
-    loadKeys();
-    setHasStarted(true);
-    play();
-  }, [getAudioContext, loadKeys, play]);
-
-  const handleReplay = useCallback(() => {
-    getAudioContext();
-    loadKeys();
-    setHasStarted(true);
-    play();
-  }, [getAudioContext, loadKeys, play]);
-
-  // Clean up audio on unmount
+  // Autoplay on mount + global user gesture unlock for Web Audio
   useEffect(() => {
+    const unlockAudio = () => {
+      const a = getAudioContext();
+      if (a && a.state === "suspended") {
+        a.resume();
+      }
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
+    window.addEventListener("touchstart", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+
+    loadKeys();
+    play();
+
     return () => {
       runIdRef.current++;
-      stopAmb(0.1);
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
         } catch (e) {}
       }
     };
-  }, [stopAmb]);
+  }, [getAudioContext, loadKeys, play]);
 
   return (
     <AnimatePresence>
@@ -569,35 +463,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
               <span>AI</span> <i>Engineer</i>
             </div>
           </div>
-
-          {/* User Tap To Play With Sound Overlay */}
-          {!hasStarted && (
-            <button
-              id="start"
-              type="button"
-              onClick={handleStart}
-              className="fixed inset-0 z-[60] flex items-center justify-center bg-[#05060b]/90 backdrop-blur-sm text-white font-['Inter',sans-serif] font-semibold text-[15px] tracking-wide border-0 cursor-pointer transition-opacity hover:opacity-95"
-            >
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-white text-xl shadow-[0_0_30px_rgba(190,200,255,0.4)] animate-pulse">
-                  ▶
-                </div>
-                <span className="tracking-[0.1em] text-neutral-200">Tap to play with sound</span>
-              </div>
-            </button>
-          )}
-
-          {/* Replay Button */}
-          {hasStarted && (
-            <button
-              id="replay"
-              type="button"
-              onClick={handleReplay}
-              className="fixed right-4 bottom-4 md:right-6 md:bottom-6 z-40 bg-white/[0.08] text-[#9aa0b4] border border-white/[0.15] hover:border-white/40 hover:text-white rounded-full px-4 py-2 font-['Inter',sans-serif] font-semibold text-[13px] cursor-pointer transition-all pointer-events-auto"
-            >
-              Replay ↺
-            </button>
-          )}
 
           {/* Subtle Bottom Meta */}
           <div className="absolute bottom-6 left-6 z-40 hidden md:flex items-center text-[10px] font-mono tracking-[0.3em] text-neutral-500 uppercase pointer-events-none">
