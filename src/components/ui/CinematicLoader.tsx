@@ -10,7 +10,6 @@ interface CinematicLoaderProps {
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
-  const [isAudioMutedByBrowser, setIsAudioMutedByBrowser] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -34,6 +33,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       if (AudioCtxClass) {
         audioCtxRef.current = new AudioCtxClass();
       }
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume().catch(() => {});
     }
     return audioCtxRef.current;
   }, []);
@@ -78,7 +80,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     (vol = 1) => {
       try {
         const a = getAudioContext();
-        if (!a || a.state === "suspended") return;
+        if (!a) return;
+        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const n = a.createBuffer(1, Math.floor(a.sampleRate * 0.5), a.sampleRate);
         const d = n.getChannelData(0);
@@ -105,7 +108,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const boom = useCallback(() => {
     try {
       const a = getAudioContext();
-      if (!a || a.state === "suspended") return;
+      if (!a) return;
+      if (a.state === "suspended") a.resume().catch(() => {});
       const t = a.currentTime;
       const o = a.createOscillator();
       const g = a.createGain();
@@ -126,7 +130,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     (vol = 1, f = 170) => {
       try {
         const a = getAudioContext();
-        if (!a || a.state === "suspended") return;
+        if (!a) return;
+        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const o = a.createOscillator();
         const g = a.createGain();
@@ -149,7 +154,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     (vol = 1) => {
       try {
         const a = getAudioContext();
-        if (!a || a.state === "suspended") return;
+        if (!a) return;
+        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const click = (at: number, len: number, freq: number, q: number, gain: number) => {
           const n = a.createBuffer(1, Math.floor(a.sampleRate * len), a.sampleRate);
@@ -180,7 +186,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       if (!KB.length) return keySynth(vol);
       try {
         const a = getAudioContext();
-        if (!a || a.state === "suspended") return;
+        if (!a) return;
+        if (a.state === "suspended") a.resume().catch(() => {});
         let i: number;
         do {
           i = Math.floor(Math.random() * KB.length);
@@ -258,7 +265,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       });
     }
 
-    // Ensure audio clips are loaded
+    // Pre-decode key samples
     loadKeys();
 
     const L = build(FROM);
@@ -428,61 +435,45 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     finish();
   }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
-  // Unlocks audio when user touches/clicks anywhere
-  const handleUserUnlock = useCallback(async () => {
+  // Autoplay on mount + global transparent listener to unlock audio seamlessly
+  useEffect(() => {
     const a = getAudioContext();
     if (a && a.state === "suspended") {
-      try {
-        await a.resume();
-      } catch (e) {}
+      a.resume().catch(() => {});
     }
-    await loadKeys();
-    setIsAudioMutedByBrowser(false);
-  }, [getAudioContext, loadKeys]);
 
-  // Autoplay on mount + global listener for unlocking audio
-  useEffect(() => {
-    const init = async () => {
-      const a = getAudioContext();
-      if (a) {
-        if (a.state === "suspended") {
-          setIsAudioMutedByBrowser(true);
-        }
-        try {
-          await a.resume();
-          if (a.state === "running") {
-            setIsAudioMutedByBrowser(false);
-          }
-        } catch (e) {}
+    loadKeys();
+    play();
+
+    // Silent background gesture unlock without any UI banner
+    const silentUnlock = () => {
+      const ctx = getAudioContext();
+      if (ctx && ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
       }
-      await loadKeys();
-      play();
+      loadKeys();
     };
 
-    init();
-
-    const onUserGesture = () => {
-      handleUserUnlock();
-    };
-
-    window.addEventListener("pointerdown", onUserGesture, { once: true });
-    window.addEventListener("touchstart", onUserGesture, { once: true });
-    window.addEventListener("click", onUserGesture, { once: true });
-    window.addEventListener("keydown", onUserGesture, { once: true });
+    window.addEventListener("pointerdown", silentUnlock, { once: true });
+    window.addEventListener("touchstart", silentUnlock, { once: true });
+    window.addEventListener("click", silentUnlock, { once: true });
+    window.addEventListener("keydown", silentUnlock, { once: true });
+    window.addEventListener("scroll", silentUnlock, { once: true });
 
     return () => {
       runIdRef.current++;
-      window.removeEventListener("pointerdown", onUserGesture);
-      window.removeEventListener("touchstart", onUserGesture);
-      window.removeEventListener("click", onUserGesture);
-      window.removeEventListener("keydown", onUserGesture);
+      window.removeEventListener("pointerdown", silentUnlock);
+      window.removeEventListener("touchstart", silentUnlock);
+      window.removeEventListener("click", silentUnlock);
+      window.removeEventListener("keydown", silentUnlock);
+      window.removeEventListener("scroll", silentUnlock);
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
         } catch (e) {}
       }
     };
-  }, [getAudioContext, handleUserUnlock, loadKeys, play]);
+  }, [getAudioContext, loadKeys, play]);
 
   return (
     <AnimatePresence>
@@ -495,9 +486,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             opacity: 0.9,
             transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] },
           }}
-          onClick={handleUserUnlock}
-          onTouchStart={handleUserUnlock}
-          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-pointer"
+          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none"
         >
           {/* Top Bar with Brand & Skip Button */}
           <div className="absolute top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-auto">
@@ -505,19 +494,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
               JAYAVARDHAN • EST. 2026
             </span>
 
-            {/* If browser blocked autoplay, show sleek unobtrusive tap pill */}
-            {isAudioMutedByBrowser && (
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-mono tracking-wider text-neutral-300 animate-pulse">
-                <span>🔈 TAP TO UNMUTE</span>
-              </div>
-            )}
-
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                finish();
-              }}
+              onClick={finish}
               className="px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-[11px] font-mono tracking-widest text-neutral-300 hover:text-white transition-all uppercase"
             >
               SKIP INTRO ↗
