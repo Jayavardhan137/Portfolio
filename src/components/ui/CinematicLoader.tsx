@@ -10,6 +10,7 @@ interface CinematicLoaderProps {
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
+  const [isAudioMutedByBrowser, setIsAudioMutedByBrowser] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -26,47 +27,85 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   // Audio Context getter
   const getAudioContext = useCallback(() => {
     if (!audioCtxRef.current) {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtxClass =
+        typeof window !== "undefined"
+          ? window.AudioContext || (window as any).webkitAudioContext
+          : null;
       if (AudioCtxClass) {
         audioCtxRef.current = new AudioCtxClass();
       }
     }
-    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume();
-    }
     return audioCtxRef.current;
   }, []);
 
-  // Whoosh sound
-  const whoosh = useCallback((vol = 1) => {
+  // Safe decoder for base64 WAV key clips
+  const loadKeys = useCallback(async () => {
+    if (keyBuffersRef.current.length > 0) return keyBuffersRef.current;
     try {
       const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      const n = a.createBuffer(1, Math.floor(a.sampleRate * 0.5), a.sampleRate);
-      const d = n.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-      const s = a.createBufferSource();
-      s.buffer = n;
-      const bp = a.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.Q.value = 1.2;
-      bp.frequency.setValueAtTime(300, t);
-      bp.frequency.exponentialRampToValueAtTime(3200, t + 0.4);
-      const g = a.createGain();
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.35 * vol, t + 0.18);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-      s.connect(bp).connect(g).connect(a.destination);
-      s.start(t);
-    } catch (e) {}
+      if (!a) return [];
+
+      const decoded: AudioBuffer[] = [];
+      for (let i = 0; i < KEY_CLIPS.length; i++) {
+        try {
+          const b = KEY_CLIPS[i];
+          const bin = atob(b);
+          const u = new Uint8Array(bin.length);
+          for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
+
+          const buf = await new Promise<AudioBuffer>((resolve, reject) => {
+            const res = a.decodeAudioData(u.buffer.slice(0), resolve, reject);
+            if (res && typeof res.then === "function") {
+              res.then(resolve).catch(reject);
+            }
+          });
+          if (buf) decoded.push(buf);
+        } catch (clipErr) {
+          // Individual clip failure handled gracefully
+        }
+      }
+      if (decoded.length > 0) {
+        keyBuffersRef.current = decoded;
+      }
+      return decoded;
+    } catch (e) {
+      return [];
+    }
   }, [getAudioContext]);
+
+  // Whoosh sound
+  const whoosh = useCallback(
+    (vol = 1) => {
+      try {
+        const a = getAudioContext();
+        if (!a || a.state === "suspended") return;
+        const t = a.currentTime;
+        const n = a.createBuffer(1, Math.floor(a.sampleRate * 0.5), a.sampleRate);
+        const d = n.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        const s = a.createBufferSource();
+        s.buffer = n;
+        const bp = a.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.Q.value = 1.2;
+        bp.frequency.setValueAtTime(300, t);
+        bp.frequency.exponentialRampToValueAtTime(3200, t + 0.4);
+        const g = a.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.35 * vol, t + 0.18);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        s.connect(bp).connect(g).connect(a.destination);
+        s.start(t);
+      } catch (e) {}
+    },
+    [getAudioContext]
+  );
 
   // Boom sub-bass impact
   const boom = useCallback(() => {
     try {
       const a = getAudioContext();
-      if (!a) return;
+      if (!a || a.state === "suspended") return;
       const t = a.currentTime;
       const o = a.createOscillator();
       const g = a.createGain();
@@ -83,92 +122,82 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   }, [getAudioContext]);
 
   // Bounce sound
-  const bounce = useCallback((vol = 1, f = 170) => {
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      const o = a.createOscillator();
-      const g = a.createGain();
-      o.type = "sine";
-      o.frequency.setValueAtTime(f * 2, t);
-      o.frequency.exponentialRampToValueAtTime(f * 0.45, t + 0.14);
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.6 * vol, t + 0.006);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
-      o.connect(g).connect(a.destination);
-      o.start(t);
-      o.stop(t + 0.22);
-    } catch (e) {}
-  }, [getAudioContext]);
+  const bounce = useCallback(
+    (vol = 1, f = 170) => {
+      try {
+        const a = getAudioContext();
+        if (!a || a.state === "suspended") return;
+        const t = a.currentTime;
+        const o = a.createOscillator();
+        const g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f * 2, t);
+        o.frequency.exponentialRampToValueAtTime(f * 0.45, t + 0.14);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.6 * vol, t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+        o.connect(g).connect(a.destination);
+        o.start(t);
+        o.stop(t + 0.22);
+      } catch (e) {}
+    },
+    [getAudioContext]
+  );
 
   // Mechanical typing sounds
-  const keySynth = useCallback((vol = 1) => {
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
-      const click = (at: number, len: number, freq: number, q: number, gain: number) => {
-        const n = a.createBuffer(1, Math.floor(a.sampleRate * len), a.sampleRate);
-        const d = n.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.5);
+  const keySynth = useCallback(
+    (vol = 1) => {
+      try {
+        const a = getAudioContext();
+        if (!a || a.state === "suspended") return;
+        const t = a.currentTime;
+        const click = (at: number, len: number, freq: number, q: number, gain: number) => {
+          const n = a.createBuffer(1, Math.floor(a.sampleRate * len), a.sampleRate);
+          const d = n.getChannelData(0);
+          for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.5);
+          const s = a.createBufferSource();
+          s.buffer = n;
+          const f = a.createBiquadFilter();
+          f.type = "bandpass";
+          f.frequency.value = freq;
+          f.Q.value = q;
+          const g = a.createGain();
+          g.gain.value = gain * vol;
+          s.connect(f).connect(g).connect(a.destination);
+          s.start(at);
+        };
+        click(t, 0.03, 2400 + Math.random() * 1200, 1.4, 1.1);
+        click(t + 0.004, 0.05, 700 + Math.random() * 200, 0.8, 0.6);
+        click(t + 0.07 + Math.random() * 0.02, 0.02, 3600 + Math.random() * 800, 1.2, 0.45);
+      } catch (e) {}
+    },
+    [getAudioContext]
+  );
+
+  const keySound = useCallback(
+    (vol = 1) => {
+      const KB = keyBuffersRef.current;
+      if (!KB.length) return keySynth(vol);
+      try {
+        const a = getAudioContext();
+        if (!a || a.state === "suspended") return;
+        let i: number;
+        do {
+          i = Math.floor(Math.random() * KB.length);
+        } while (i === lastKeyIdxRef.current && KB.length > 1);
+        lastKeyIdxRef.current = i;
+
         const s = a.createBufferSource();
-        s.buffer = n;
-        const f = a.createBiquadFilter();
-        f.type = "bandpass";
-        f.frequency.value = freq;
-        f.Q.value = q;
+        s.buffer = KB[i];
+        s.playbackRate.value = 0.95 + Math.random() * 0.12;
         const g = a.createGain();
-        g.gain.value = gain * vol;
-        s.connect(f).connect(g).connect(a.destination);
-        s.start(at);
-      };
-      click(t, 0.03, 2400 + Math.random() * 1200, 1.4, 1.1);
-      click(t + 0.004, 0.05, 700 + Math.random() * 200, 0.8, 0.6);
-      click(t + 0.07 + Math.random() * 0.02, 0.02, 3600 + Math.random() * 800, 1.2, 0.45);
-    } catch (e) {}
-  }, [getAudioContext]);
-
-  const loadKeys = useCallback(async () => {
-    if (keyBuffersRef.current.length) return;
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      const buffers = await Promise.all(
-        KEY_CLIPS.map(async (b) => {
-          const bin = atob(b);
-          const u = new Uint8Array(bin.length);
-          for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-          return await a.decodeAudioData(u.buffer.slice(0));
-        })
-      );
-      keyBuffersRef.current = buffers;
-    } catch (e) {
-      keyBuffersRef.current = [];
-    }
-  }, [getAudioContext]);
-
-  const keySound = useCallback((vol = 1) => {
-    const KB = keyBuffersRef.current;
-    if (!KB.length) return keySynth(vol);
-    try {
-      const a = getAudioContext();
-      if (!a) return;
-      let i: number;
-      do {
-        i = Math.floor(Math.random() * KB.length);
-      } while (i === lastKeyIdxRef.current && KB.length > 1);
-      lastKeyIdxRef.current = i;
-
-      const s = a.createBufferSource();
-      s.buffer = KB[i];
-      s.playbackRate.value = 0.95 + Math.random() * 0.12;
-      const g = a.createGain();
-      g.gain.value = Math.min(1.6, 1.3 * vol);
-      s.connect(g).connect(a.destination);
-      s.start();
-    } catch (e) {}
-  }, [getAudioContext, keySynth]);
+        g.gain.value = Math.min(1.8, 1.4 * vol);
+        s.connect(g).connect(a.destination);
+        s.start();
+      } catch (e) {}
+    },
+    [getAudioContext, keySynth]
+  );
 
   const finish = useCallback(() => {
     runIdRef.current++;
@@ -228,6 +257,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         return s;
       });
     }
+
+    // Ensure audio clips are loaded
+    loadKeys();
 
     const L = build(FROM);
     await (document as any).fonts?.ready?.catch(() => {});
@@ -394,36 +426,63 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     await wait(2400);
     if (!live()) return;
     finish();
-  }, [bounce, boom, finish, isFinished, keySound, whoosh]);
+  }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
-  // Autoplay on mount + global user gesture unlock for Web Audio
+  // Unlocks audio when user touches/clicks anywhere
+  const handleUserUnlock = useCallback(async () => {
+    const a = getAudioContext();
+    if (a && a.state === "suspended") {
+      try {
+        await a.resume();
+      } catch (e) {}
+    }
+    await loadKeys();
+    setIsAudioMutedByBrowser(false);
+  }, [getAudioContext, loadKeys]);
+
+  // Autoplay on mount + global listener for unlocking audio
   useEffect(() => {
-    const unlockAudio = () => {
+    const init = async () => {
       const a = getAudioContext();
-      if (a && a.state === "suspended") {
-        a.resume();
+      if (a) {
+        if (a.state === "suspended") {
+          setIsAudioMutedByBrowser(true);
+        }
+        try {
+          await a.resume();
+          if (a.state === "running") {
+            setIsAudioMutedByBrowser(false);
+          }
+        } catch (e) {}
       }
+      await loadKeys();
+      play();
     };
 
-    window.addEventListener("pointerdown", unlockAudio, { once: true });
-    window.addEventListener("touchstart", unlockAudio, { once: true });
-    window.addEventListener("keydown", unlockAudio, { once: true });
+    init();
 
-    loadKeys();
-    play();
+    const onUserGesture = () => {
+      handleUserUnlock();
+    };
+
+    window.addEventListener("pointerdown", onUserGesture, { once: true });
+    window.addEventListener("touchstart", onUserGesture, { once: true });
+    window.addEventListener("click", onUserGesture, { once: true });
+    window.addEventListener("keydown", onUserGesture, { once: true });
 
     return () => {
       runIdRef.current++;
-      window.removeEventListener("pointerdown", unlockAudio);
-      window.removeEventListener("touchstart", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("pointerdown", onUserGesture);
+      window.removeEventListener("touchstart", onUserGesture);
+      window.removeEventListener("click", onUserGesture);
+      window.removeEventListener("keydown", onUserGesture);
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
         } catch (e) {}
       }
     };
-  }, [getAudioContext, loadKeys, play]);
+  }, [getAudioContext, handleUserUnlock, loadKeys, play]);
 
   return (
     <AnimatePresence>
@@ -436,7 +495,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             opacity: 0.9,
             transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] },
           }}
-          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none"
+          onClick={handleUserUnlock}
+          onTouchStart={handleUserUnlock}
+          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-pointer"
         >
           {/* Top Bar with Brand & Skip Button */}
           <div className="absolute top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-auto">
@@ -444,9 +505,19 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
               JAYAVARDHAN • EST. 2026
             </span>
 
+            {/* If browser blocked autoplay, show sleek unobtrusive tap pill */}
+            {isAudioMutedByBrowser && (
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-mono tracking-wider text-neutral-300 animate-pulse">
+                <span>🔈 TAP TO UNMUTE</span>
+              </div>
+            )}
+
             <button
               type="button"
-              onClick={finish}
+              onClick={(e) => {
+                e.stopPropagation();
+                finish();
+              }}
               className="px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-[11px] font-mono tracking-widest text-neutral-300 hover:text-white transition-all uppercase"
             >
               SKIP INTRO ↗
@@ -454,7 +525,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
           </div>
 
           {/* Kinetic Morph Stage */}
-          <div id="stage" ref={stageRef} className="loader-stage">
+          <div id="stage" ref={stageRef} className="loader-stage pointer-events-none">
             <div id="glow" ref={glowRef} className="loader-glow" />
             <div id="stem" ref={stemRef} className="loader-stem" />
             <div id="dot" ref={dotRef} className="loader-dot" />
