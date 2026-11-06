@@ -10,7 +10,6 @@ interface CinematicLoaderProps {
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -24,7 +23,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const keyBuffersRef = useRef<AudioBuffer[]>([]);
   const lastKeyIdxRef = useRef<number>(-1);
 
-  // Audio Context getter
+  // Audio Context getter with auto-resume attempt
   const getAudioContext = useCallback(() => {
     if (!audioCtxRef.current) {
       const AudioCtxClass =
@@ -34,6 +33,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       if (AudioCtxClass) {
         audioCtxRef.current = new AudioCtxClass();
       }
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume().catch(() => {});
     }
     return audioCtxRef.current;
   }, []);
@@ -50,7 +52,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
           const bin = atob(b);
           const u = new Uint8Array(bin.length);
           for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-          return await a.decodeAudioData(u.buffer.slice(0));
+          return a.decodeAudioData(u.buffer.slice(0));
         })
       );
       keyBuffersRef.current = buffers;
@@ -245,7 +247,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       });
     }
 
-    // Ensure audio clips are decoded and ready
+    // Pre-decode key samples
     await loadKeys();
 
     const L = build(FROM);
@@ -415,51 +417,41 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     finish();
   }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
-  const startExperience = useCallback(async () => {
-    if (hasStarted) return;
-    setHasStarted(true);
-
-    const a = getAudioContext();
-    if (a && a.state === "suspended") {
-      try {
-        await a.resume();
-      } catch (e) {}
-    }
-
-    await loadKeys();
-    play();
-  }, [getAudioContext, hasStarted, loadKeys, play]);
-
-  // Handle single tap anywhere on screen to unlock audio and trigger intro
+  // Immediate autoplay on mount + transparent gesture unlock
   useEffect(() => {
-    const a = getAudioContext();
-    // If browser already has active audio authorization (e.g. returning visitor with MEI), start automatically
-    if (a && a.state === "running") {
-      startExperience();
-      return;
-    }
+    getAudioContext();
+    loadKeys();
+    play();
 
-    const onUserGesture = () => {
-      startExperience();
+    // Silent background gesture unlock without any UI banner
+    const silentUnlock = () => {
+      const ctx = getAudioContext();
+      if (ctx && ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+      loadKeys();
     };
 
-    window.addEventListener("pointerdown", onUserGesture, { once: true });
-    window.addEventListener("touchstart", onUserGesture, { once: true });
-    window.addEventListener("click", onUserGesture, { once: true });
-    window.addEventListener("keydown", onUserGesture, { once: true });
+    window.addEventListener("pointerdown", silentUnlock, { once: true });
+    window.addEventListener("touchstart", silentUnlock, { once: true });
+    window.addEventListener("click", silentUnlock, { once: true });
+    window.addEventListener("keydown", silentUnlock, { once: true });
+    window.addEventListener("scroll", silentUnlock, { once: true });
 
     return () => {
-      window.removeEventListener("pointerdown", onUserGesture);
-      window.removeEventListener("touchstart", onUserGesture);
-      window.removeEventListener("click", onUserGesture);
-      window.removeEventListener("keydown", onUserGesture);
+      runIdRef.current++;
+      window.removeEventListener("pointerdown", silentUnlock);
+      window.removeEventListener("touchstart", silentUnlock);
+      window.removeEventListener("click", silentUnlock);
+      window.removeEventListener("keydown", silentUnlock);
+      window.removeEventListener("scroll", silentUnlock);
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
         } catch (e) {}
       }
     };
-  }, [getAudioContext, startExperience]);
+  }, [getAudioContext, loadKeys, play]);
 
   return (
     <AnimatePresence>
@@ -472,9 +464,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             opacity: 0.9,
             transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] },
           }}
-          onClick={startExperience}
-          onTouchStart={startExperience}
-          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-pointer"
+          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-default"
         >
           {/* Top Bar with Brand & Skip Button */}
           <div className="absolute top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-auto">
@@ -484,10 +474,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                finish();
-              }}
+              onClick={finish}
               className="px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-[11px] font-mono tracking-widest text-neutral-300 hover:text-white transition-all uppercase"
             >
               SKIP INTRO ↗
@@ -504,20 +491,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
               <span>AI</span> <i>Engineer</i>
             </div>
           </div>
-
-          {/* Centered / Bottom Tap-To-Enter Prompt */}
-          {!hasStarted && (
-            <div className="absolute inset-0 z-40 flex flex-col items-center justify-center pointer-events-none">
-              <div className="flex flex-col items-center gap-4 mt-40">
-                <div className="w-14 h-14 rounded-full border border-white/25 bg-white/[0.08] backdrop-blur-md flex items-center justify-center text-white text-base shadow-[0_0_30px_rgba(190,200,255,0.35)] animate-pulse">
-                  ▶
-                </div>
-                <span className="text-[12px] font-mono tracking-[0.25em] text-neutral-300 uppercase">
-                  TAP ANYWHERE TO ENTER
-                </span>
-              </div>
-            </div>
-          )}
 
           {/* Subtle Bottom Meta */}
           <div className="absolute bottom-6 left-6 z-40 hidden md:flex items-center text-[10px] font-mono tracking-[0.3em] text-neutral-500 uppercase pointer-events-none">
