@@ -10,6 +10,7 @@ interface CinematicLoaderProps {
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -47,29 +48,16 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       const a = getAudioContext();
       if (!a) return [];
 
-      const decoded: AudioBuffer[] = [];
-      for (let i = 0; i < KEY_CLIPS.length; i++) {
-        try {
-          const b = KEY_CLIPS[i];
+      const buffers = await Promise.all(
+        KEY_CLIPS.map(async (b) => {
           const bin = atob(b);
           const u = new Uint8Array(bin.length);
-          for (let j = 0; j < bin.length; j++) u[j] = bin.charCodeAt(j);
-
-          const buf = await new Promise<AudioBuffer>((resolve, reject) => {
-            const res = a.decodeAudioData(u.buffer.slice(0), resolve, reject);
-            if (res && typeof res.then === "function") {
-              res.then(resolve).catch(reject);
-            }
-          });
-          if (buf) decoded.push(buf);
-        } catch (clipErr) {
-          // Individual clip failure handled gracefully
-        }
-      }
-      if (decoded.length > 0) {
-        keyBuffersRef.current = decoded;
-      }
-      return decoded;
+          for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+          return await a.decodeAudioData(u.buffer.slice(0));
+        })
+      );
+      keyBuffersRef.current = buffers;
+      return buffers;
     } catch (e) {
       return [];
     }
@@ -81,7 +69,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       try {
         const a = getAudioContext();
         if (!a) return;
-        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const n = a.createBuffer(1, Math.floor(a.sampleRate * 0.5), a.sampleRate);
         const d = n.getChannelData(0);
@@ -109,7 +96,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     try {
       const a = getAudioContext();
       if (!a) return;
-      if (a.state === "suspended") a.resume().catch(() => {});
       const t = a.currentTime;
       const o = a.createOscillator();
       const g = a.createGain();
@@ -131,7 +117,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       try {
         const a = getAudioContext();
         if (!a) return;
-        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const o = a.createOscillator();
         const g = a.createGain();
@@ -155,7 +140,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       try {
         const a = getAudioContext();
         if (!a) return;
-        if (a.state === "suspended") a.resume().catch(() => {});
         const t = a.currentTime;
         const click = (at: number, len: number, freq: number, q: number, gain: number) => {
           const n = a.createBuffer(1, Math.floor(a.sampleRate * len), a.sampleRate);
@@ -187,7 +171,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       try {
         const a = getAudioContext();
         if (!a) return;
-        if (a.state === "suspended") a.resume().catch(() => {});
         let i: number;
         do {
           i = Math.floor(Math.random() * KB.length);
@@ -266,7 +249,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     }
 
     // Pre-decode key samples
-    loadKeys();
+    await loadKeys();
 
     const L = build(FROM);
     await (document as any).fonts?.ready?.catch(() => {});
@@ -435,45 +418,45 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     finish();
   }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
-  // Autoplay on mount + global transparent listener to unlock audio seamlessly
-  useEffect(() => {
-    const a = getAudioContext();
-    if (a && a.state === "suspended") {
-      a.resume().catch(() => {});
-    }
-
+  const startExperience = useCallback(() => {
+    if (hasStarted) return;
+    setHasStarted(true);
+    getAudioContext();
     loadKeys();
     play();
+  }, [getAudioContext, hasStarted, loadKeys, play]);
 
-    // Silent background gesture unlock without any UI banner
-    const silentUnlock = () => {
-      const ctx = getAudioContext();
-      if (ctx && ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-      loadKeys();
-    };
+  // Check if browser allows immediate autoplay; otherwise await first interaction
+  useEffect(() => {
+    const a = getAudioContext();
+    if (a && a.state === "running") {
+      // Browser already allows sound! Start immediately.
+      startExperience();
+    } else {
+      // Browser starts suspended: trigger on any user interaction immediately
+      const handleUserGesture = () => {
+        startExperience();
+      };
 
-    window.addEventListener("pointerdown", silentUnlock, { once: true });
-    window.addEventListener("touchstart", silentUnlock, { once: true });
-    window.addEventListener("click", silentUnlock, { once: true });
-    window.addEventListener("keydown", silentUnlock, { once: true });
-    window.addEventListener("scroll", silentUnlock, { once: true });
+      window.addEventListener("pointerdown", handleUserGesture, { once: true });
+      window.addEventListener("touchstart", handleUserGesture, { once: true });
+      window.addEventListener("click", handleUserGesture, { once: true });
+      window.addEventListener("keydown", handleUserGesture, { once: true });
 
-    return () => {
-      runIdRef.current++;
-      window.removeEventListener("pointerdown", silentUnlock);
-      window.removeEventListener("touchstart", silentUnlock);
-      window.removeEventListener("click", silentUnlock);
-      window.removeEventListener("keydown", silentUnlock);
-      window.removeEventListener("scroll", silentUnlock);
-      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
-        try {
-          audioCtxRef.current.close();
-        } catch (e) {}
-      }
-    };
-  }, [getAudioContext, loadKeys, play]);
+      // Fallback timer: if visitor doesn't touch the screen within 2.5s, autoplay visually so they don't get stuck
+      const timer = setTimeout(() => {
+        startExperience();
+      }, 2500);
+
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener("pointerdown", handleUserGesture);
+        window.removeEventListener("touchstart", handleUserGesture);
+        window.removeEventListener("click", handleUserGesture);
+        window.removeEventListener("keydown", handleUserGesture);
+      };
+    }
+  }, [getAudioContext, startExperience]);
 
   return (
     <AnimatePresence>
@@ -486,7 +469,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             opacity: 0.9,
             transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] },
           }}
-          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none"
+          onClick={startExperience}
+          onTouchStart={startExperience}
+          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-pointer"
         >
           {/* Top Bar with Brand & Skip Button */}
           <div className="absolute top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-auto">
@@ -496,7 +481,10 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
             <button
               type="button"
-              onClick={finish}
+              onClick={(e) => {
+                e.stopPropagation();
+                finish();
+              }}
               className="px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-[11px] font-mono tracking-widest text-neutral-300 hover:text-white transition-all uppercase"
             >
               SKIP INTRO ↗
@@ -513,6 +501,15 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
               <span>AI</span> <i>Engineer</i>
             </div>
           </div>
+
+          {/* Elegant Prompt if waiting for user gesture to unlock audio */}
+          {!hasStarted && (
+            <div className="absolute bottom-16 left-0 right-0 z-50 flex justify-center pointer-events-none">
+              <span className="text-[11px] font-mono tracking-[0.3em] text-neutral-400 uppercase animate-pulse">
+                TAP ANYWHERE TO ENTER ↗
+              </span>
+            </div>
+          )}
 
           {/* Subtle Bottom Meta */}
           <div className="absolute bottom-6 left-6 z-40 hidden md:flex items-center text-[10px] font-mono tracking-[0.3em] text-neutral-500 uppercase pointer-events-none">
