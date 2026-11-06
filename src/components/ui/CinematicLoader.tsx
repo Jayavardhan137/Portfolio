@@ -22,10 +22,11 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const keyBuffersRef = useRef<AudioBuffer[]>([]);
   const lastKeyIdxRef = useRef<number>(-1);
+  const audioUnlockedRef = useRef<boolean>(false);
 
   // Audio Context getter with auto-resume attempt
   const getAudioContext = useCallback(() => {
-    if (!audioCtxRef.current) {
+    if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
       const AudioCtxClass =
         typeof window !== "undefined"
           ? window.AudioContext || (window as any).webkitAudioContext
@@ -47,14 +48,18 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       const a = getAudioContext();
       if (!a) return [];
 
-      const buffers = await Promise.all(
-        KEY_CLIPS.map(async (b) => {
+      const buffers: AudioBuffer[] = [];
+      for (const b of KEY_CLIPS) {
+        try {
           const bin = atob(b);
           const u = new Uint8Array(bin.length);
           for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-          return a.decodeAudioData(u.buffer.slice(0));
-        })
-      );
+          const buf = await new Promise<AudioBuffer>((resolve, reject) => {
+            a.decodeAudioData(u.buffer.slice(0), resolve, reject);
+          });
+          if (buf) buffers.push(buf);
+        } catch (e) {}
+      }
       keyBuffersRef.current = buffers;
       return buffers;
     } catch (e) {
@@ -67,8 +72,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     (vol = 1) => {
       try {
         const a = getAudioContext();
-        if (!a) return;
-        const t = a.currentTime;
+        if (!a || a.state !== "running") return;
+        const t = Math.max(a.currentTime, 0.001);
         const n = a.createBuffer(1, Math.floor(a.sampleRate * 0.5), a.sampleRate);
         const d = n.getChannelData(0);
         for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -81,7 +86,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         bp.frequency.exponentialRampToValueAtTime(3200, t + 0.4);
         const g = a.createGain();
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.35 * vol, t + 0.18);
+        g.gain.exponentialRampToValueAtTime(0.4 * vol, t + 0.18);
         g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
         s.connect(bp).connect(g).connect(a.destination);
         s.start(t);
@@ -94,15 +99,15 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   const boom = useCallback(() => {
     try {
       const a = getAudioContext();
-      if (!a) return;
-      const t = a.currentTime;
+      if (!a || a.state !== "running") return;
+      const t = Math.max(a.currentTime, 0.001);
       const o = a.createOscillator();
       const g = a.createGain();
       o.type = "sine";
       o.frequency.setValueAtTime(75, t);
       o.frequency.exponentialRampToValueAtTime(32, t + 0.9);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.7, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.8, t + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 1.1);
       o.connect(g).connect(a.destination);
       o.start(t);
@@ -115,15 +120,15 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     (vol = 1, f = 170) => {
       try {
         const a = getAudioContext();
-        if (!a) return;
-        const t = a.currentTime;
+        if (!a || a.state !== "running") return;
+        const t = Math.max(a.currentTime, 0.001);
         const o = a.createOscillator();
         const g = a.createGain();
         o.type = "sine";
         o.frequency.setValueAtTime(f * 2, t);
         o.frequency.exponentialRampToValueAtTime(f * 0.45, t + 0.14);
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.6 * vol, t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.7 * vol, t + 0.006);
         g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
         o.connect(g).connect(a.destination);
         o.start(t);
@@ -133,13 +138,13 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     [getAudioContext]
   );
 
-  // Mechanical typing sounds
+  // Mechanical typing sounds fallback
   const keySynth = useCallback(
     (vol = 1) => {
       try {
         const a = getAudioContext();
-        if (!a) return;
-        const t = a.currentTime;
+        if (!a || a.state !== "running") return;
+        const t = Math.max(a.currentTime, 0.001);
         const click = (at: number, len: number, freq: number, q: number, gain: number) => {
           const n = a.createBuffer(1, Math.floor(a.sampleRate * len), a.sampleRate);
           const d = n.getChannelData(0);
@@ -169,7 +174,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       if (!KB.length) return keySynth(vol);
       try {
         const a = getAudioContext();
-        if (!a) return;
+        if (!a || a.state !== "running") return;
         let i: number;
         do {
           i = Math.floor(Math.random() * KB.length);
@@ -180,9 +185,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         s.buffer = KB[i];
         s.playbackRate.value = 0.95 + Math.random() * 0.12;
         const g = a.createGain();
-        g.gain.value = Math.min(1.8, 1.4 * vol);
+        g.gain.value = Math.min(2.0, 1.5 * vol);
         s.connect(g).connect(a.destination);
-        s.start();
+        s.start(0);
       } catch (e) {}
     },
     [getAudioContext, keySynth]
@@ -417,41 +422,51 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     finish();
   }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
 
+  // Screen interaction handler: unlocks audio and seamlessly replays with audio if it started silent
+  const handleScreenInteraction = useCallback(async () => {
+    const a = getAudioContext();
+    if (!a) return;
+    if (a.state === "suspended") {
+      await a.resume().catch(() => {});
+    }
+    if (a.state === "running" && !audioUnlockedRef.current) {
+      audioUnlockedRef.current = true;
+      await loadKeys();
+      play();
+    }
+  }, [getAudioContext, loadKeys, play]);
+
   // Immediate autoplay on mount + transparent gesture unlock
   useEffect(() => {
-    getAudioContext();
+    const a = getAudioContext();
+    if (a && a.state === "running") {
+      audioUnlockedRef.current = true;
+    }
     loadKeys();
     play();
 
-    // Silent background gesture unlock without any UI banner
-    const silentUnlock = () => {
-      const ctx = getAudioContext();
-      if (ctx && ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-      loadKeys();
+    const onAnyGesture = () => {
+      handleScreenInteraction();
     };
 
-    window.addEventListener("pointerdown", silentUnlock, { once: true });
-    window.addEventListener("touchstart", silentUnlock, { once: true });
-    window.addEventListener("click", silentUnlock, { once: true });
-    window.addEventListener("keydown", silentUnlock, { once: true });
-    window.addEventListener("scroll", silentUnlock, { once: true });
+    window.addEventListener("pointerdown", onAnyGesture);
+    window.addEventListener("touchstart", onAnyGesture);
+    window.addEventListener("click", onAnyGesture);
+    window.addEventListener("keydown", onAnyGesture);
 
     return () => {
       runIdRef.current++;
-      window.removeEventListener("pointerdown", silentUnlock);
-      window.removeEventListener("touchstart", silentUnlock);
-      window.removeEventListener("click", silentUnlock);
-      window.removeEventListener("keydown", silentUnlock);
-      window.removeEventListener("scroll", silentUnlock);
+      window.removeEventListener("pointerdown", onAnyGesture);
+      window.removeEventListener("touchstart", onAnyGesture);
+      window.removeEventListener("click", onAnyGesture);
+      window.removeEventListener("keydown", onAnyGesture);
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
         } catch (e) {}
       }
     };
-  }, [getAudioContext, loadKeys, play]);
+  }, [getAudioContext, handleScreenInteraction, loadKeys, play]);
 
   return (
     <AnimatePresence>
@@ -464,7 +479,9 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
             opacity: 0.9,
             transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] },
           }}
-          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-default"
+          onClick={handleScreenInteraction}
+          onTouchStart={handleScreenInteraction}
+          className="fixed inset-0 z-[99999] bg-[#05060b] flex flex-col justify-between overflow-hidden select-none cursor-pointer"
         >
           {/* Top Bar with Brand & Skip Button */}
           <div className="absolute top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-auto">
@@ -474,7 +491,10 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
             <button
               type="button"
-              onClick={finish}
+              onClick={(e) => {
+                e.stopPropagation();
+                finish();
+              }}
               className="px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-[11px] font-mono tracking-widest text-neutral-300 hover:text-white transition-all uppercase"
             >
               SKIP INTRO ↗
