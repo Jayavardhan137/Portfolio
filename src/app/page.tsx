@@ -5,7 +5,7 @@ import { CinematicLoader } from "@/components/ui/CinematicLoader";
 import { Navbar } from "@/components/navigation/Navbar";
 import { HeroSection } from "@/components/echo/HeroSection";
 import { ScrollExpandMedia } from "@/components/echo/ScrollExpandMedia";
-import { ExperienceSpatial } from "@/components/echo/ExperienceSpatial";
+import { MyJourneySection } from "@/components/echo/MyJourneySection";
 import { FeaturedProjectsCarousel } from "@/components/echo/FeaturedProjectsCarousel";
 import { ServicesAccordion } from "@/components/echo/ServicesAccordion";
 import { FooterContact } from "@/components/echo/FooterContact";
@@ -40,8 +40,8 @@ export default function Home() {
         {/* About Section: ScrollExpandMedia Kinetic Canvas */}
         <ScrollExpandMedia onOpenContact={() => openContact()} />
 
-        {/* Experience Section: Where I've Been Horizontal Spatial Canvas */}
-        <ExperienceSpatial />
+        {/* My Journey Section: Editorial Narrative of B.Tech CSE (AI & ML) Growth */}
+        <MyJourneySection />
 
         {/* Featured Projects Carousel (Curved Liquid View + Modal) */}
         <FeaturedProjectsCarousel />

@@ -10,7 +10,7 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 const NAV_ITEMS = [
   { label: "HOME", href: "#home" },
   { label: "ABOUT ME", href: "#about" },
-  { label: "EXPERIENCE", href: "#experience" },
+  { label: "MY JOURNEY", href: "#journey" },
   { label: "PROJECTS", href: "#projects" },
   { label: "SERVICES", href: "#services" },
 ];
