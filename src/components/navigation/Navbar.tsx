@@ -1,33 +1,86 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { useAudio } from "@/hooks/useAudio";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 
-const NAV_ITEMS = [
-  { label: "HOME", href: "/#home" },
-  { label: "ABOUT ME", href: "/#about" },
-  { label: "MY JOURNEY", href: "/#journey" },
-  { label: "PROJECTS", href: "/#projects" },
-  { label: "SERVICES", href: "/#services" },
-  { label: "RESUME", href: "/resume" },
+interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { id: "home", label: "HOME", href: "/#home" },
+  { id: "about", label: "ABOUT ME", href: "/#about" },
+  { id: "journey", label: "MY JOURNEY", href: "/#journey" },
+  { id: "projects", label: "PROJECTS", href: "/#projects" },
+  { id: "services", label: "SERVICES", href: "/#services" },
+  { id: "resume", label: "RESUME", href: "/resume" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const { isEnabled: isSoundOn, toggleSound, playClick, playHover } = useAudio();
 
   useEffect(() => {
+    if (pathname === "/resume") {
+      setActiveSection("resume");
+      return;
+    }
+    if (pathname === "/contact") {
+      setActiveSection("contact");
+      return;
+    }
+
+    const sections = ["home", "about", "journey", "projects", "services"];
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 40);
+
+      // Total page scroll percentage for the progress bar
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (scrollY / docHeight) * 100)));
+      }
+
+      // Check section bounding rectangles
+      // Offset by 240px to trigger the section switch comfortably as it enters viewport
+      const offset = 240;
+      let current = "home";
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          if (top <= offset) {
+            current = sectionId;
+          }
+        }
+      }
+
+      // If scrolled near the very bottom of the document, activate the last section ("services")
+      if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 50) {
+        current = "services";
+      }
+
+      setActiveSection(current);
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   return (
     <>
@@ -51,24 +104,34 @@ export function Navbar() {
             <span className="inline-block w-2 h-2 bg-black rounded-full ml-1 transition-transform group-hover:scale-150 duration-200" />
           </a>
 
-          {/* Center Navigation Links: Pill with no unwanted wrapping (ECHO Exact Style) */}
-          <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/95 border border-[#E2E2E2] rounded-full shadow-sm text-xs font-semibold tracking-wider text-neutral-600">
-            {NAV_ITEMS.map((item, idx) => (
-              <a
-                key={item.label}
-                id={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                href={item.href}
-                onMouseEnter={playHover}
-                onClick={playClick}
-                className={`px-4 py-2 rounded-full border transition whitespace-nowrap ${
-                  idx === 0
-                    ? "border-neutral-300 text-black hover:border-black"
-                    : "border-transparent hover:border-neutral-200 hover:text-black"
-                }`}
-              >
-                {item.label}
-              </a>
-            ))}
+          {/* Center Navigation Links: Pill with active sliding indicator (ECHO Exact Style) */}
+          <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/95 border border-[#E2E2E2] rounded-full shadow-sm text-xs font-semibold tracking-wider text-neutral-600 relative">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <a
+                  key={item.id}
+                  id={`nav-${item.id}`}
+                  href={item.href}
+                  onMouseEnter={playHover}
+                  onClick={playClick}
+                  className={`relative px-4 py-2 rounded-full transition-colors whitespace-nowrap z-10 ${
+                    isActive
+                      ? "text-black font-bold"
+                      : "text-neutral-600 hover:text-black"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavPill"
+                      className="absolute inset-0 rounded-full border border-neutral-300 bg-black/[0.04] shadow-xs -z-10"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </a>
+              );
+            })}
           </nav>
 
           {/* Right Social & Menu Links (ECHO Exact Layout) */}
@@ -138,6 +201,14 @@ export function Navbar() {
             </button>
           </div>
         </div>
+
+        {/* Horizontal Scroll Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-neutral-200/40 overflow-hidden pointer-events-none">
+          <div
+            className="h-full bg-black transition-[width] duration-150 ease-out"
+            style={{ width: `${scrollProgress}%` }}
+          />
+        </div>
       </header>
 
       {/* Mobile Drawer Menu (ECHO Exact Style) */}
@@ -165,23 +236,26 @@ export function Navbar() {
                   </button>
                 </div>
                 <nav className="flex flex-col gap-4 mt-8 text-base font-bold tracking-wider font-mono">
-                  {NAV_ITEMS.map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="py-2 border-b border-neutral-100 hover:text-neutral-500"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                  <a
-                    href="/resume"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-2 text-black hover:underline"
-                  >
-                    RESUME &amp; ABOUT ME
-                  </a>
+                  {NAV_ITEMS.map((item) => {
+                    const isActive = activeSection === item.id;
+                    return (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`py-2 border-b border-neutral-100 flex items-center justify-between transition-colors ${
+                          isActive
+                            ? "text-black font-black"
+                            : "text-neutral-500 hover:text-black"
+                        }`}
+                      >
+                        <span>{item.label}</span>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-black" />
+                        )}
+                      </a>
+                    );
+                  })}
                   <a
                     href="/contact"
                     onClick={() => setMobileMenuOpen(false)}
