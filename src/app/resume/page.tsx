@@ -5,18 +5,14 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ExternalLink,
-  Briefcase,
-  GraduationCap,
-  Code2,
-  BrainCircuit,
   MapPin,
   Mail,
   Phone,
-  Award,
   Eye,
   Check,
   Copy,
   Sparkles,
+  Code2,
 } from "lucide-react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/components/ui/Icons";
@@ -42,10 +38,10 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-white selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-[#070709] text-white selection:bg-white selection:text-black flex flex-col justify-between">
       {/* Top Header Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-14 bg-[#070709]/85 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link
             href="/"
             onMouseEnter={playHover}
@@ -66,13 +62,13 @@ export default function ResumePage() {
       </header>
 
       {/* Main Content Stage */}
-      <main className="pt-28 pb-24 px-6 md:px-12 max-w-5xl mx-auto">
+      <main className="pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
         {/* Hero Section */}
-        <div className="mb-12 border-b border-white/10 pb-10">
+        <div className="mb-10">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-neutral-400 font-mono text-xs uppercase tracking-widest">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>ABOUT ME // CURRICULUM VITAE</span>
+              <span>ABOUT ME // RESUME</span>
             </div>
 
             <span className="text-xs font-mono text-neutral-400">
@@ -132,7 +128,7 @@ export default function ResumePage() {
               rel="noopener noreferrer"
               onMouseEnter={playHover}
               onClick={playClick}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-white text-black font-mono text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-xl hover:shadow-white/10 group"
+              className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-black font-mono text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-xl hover:shadow-white/10 group"
             >
               <Eye className="w-4 h-4" />
               <span>VIEW RESUME</span>
@@ -182,258 +178,38 @@ export default function ResumePage() {
           </div>
         </div>
 
-        {/* Detailed Resume & About Me Sections */}
-        <div className="space-y-12">
-          {/* Brief About Me / Professional Summary */}
-          <section>
-            <div className="flex items-center gap-2 mb-3 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              <span>BRIEF ABOUT ME // PROFESSIONAL SUMMARY</span>
-            </div>
+        {/* Brief About Me Section */}
+        <section className="pt-8 border-t border-white/10">
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs text-neutral-400 uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+            <span>BRIEF ABOUT ME</span>
+          </div>
 
-            <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-white/[0.02] relative">
-              <p className="text-sm sm:text-base text-neutral-200 leading-relaxed font-sans mb-4">
-                Second-year B.Tech student at <strong className="text-white">AMET University</strong> with
-                hands-on experience building AI-powered applications, including a{" "}
-                <strong className="text-white">RAG chatbot</strong> and a{" "}
-                <strong className="text-white">study assistant chatbot</strong>. Skilled in Python,
-                C++, and full-stack development with React.js, Node.js, and MongoDB, with working
-                knowledge of LLM fine-tuning (LoRA), Hugging Face, and local model deployment.
-              </p>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-neutral-300">
+          <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-white/[0.02] relative space-y-4">
+            <p className="text-base sm:text-lg text-neutral-200 leading-relaxed font-sans font-light">
+              Second-year B.Tech student in Computer Science and Engineering at{" "}
+              <strong className="text-white font-medium">AMET University</strong> with hands-on experience
+              building AI-powered applications, including a{" "}
+              <strong className="text-white font-medium">RAG chatbot</strong> and a{" "}
+              <strong className="text-white font-medium">study assistant chatbot</strong>. Skilled in
+              Python, C++, and full-stack development with React.js, Node.js, and MongoDB, with working
+              knowledge of LLM fine-tuning (LoRA), Hugging Face, and local model deployment.
+            </p>
+
+            <div className="pt-2 flex flex-wrap items-center gap-3 font-mono text-xs">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-neutral-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>Seeking AI, Software Engineer, and Full-Stack Developer internship roles</span>
-              </div>
+                <span>Seeking AI, Software Engineer &amp; Full-Stack Developer internship roles</span>
+              </span>
             </div>
-          </section>
-
-          {/* Education */}
-          <section>
-            <div className="flex items-center gap-2 mb-3 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-              <GraduationCap className="w-4 h-4 text-white" />
-              <span>EDUCATION</span>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-              <div className="flex flex-wrap items-start justify-between gap-2 mb-2 font-mono">
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white font-sans">
-                    AMET University
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 font-sans">
-                    B.Tech in Computer Science and Engineering (C.S.E) — 2nd Year
-                  </p>
-                </div>
-                <span className="text-xs text-neutral-400 border border-white/10 px-2.5 py-0.5 rounded-full">
-                  Aug 2025 – Present
-                </span>
-              </div>
-              <p className="text-xs text-neutral-400 font-sans mt-2">
-                Specializing in AI &amp; Machine Learning, Core Data Structures &amp; Algorithms, and Modern Software Engineering.
-              </p>
-            </div>
-          </section>
-
-          {/* Technical Skills Matrix */}
-          <section>
-            <div className="flex items-center gap-2 mb-3 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-              <Code2 className="w-4 h-4 text-white" />
-              <span>TECHNICAL SKILLS</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                <span className="text-neutral-400 block text-[10px] uppercase tracking-wider mb-2">
-                  Programming Languages
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {["Python", "C++"].map((skill) => (
-                    <span key={skill} className="px-3 py-1 rounded-md bg-white/10 text-white font-bold">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                <span className="text-neutral-400 block text-[10px] uppercase tracking-wider mb-2">
-                  Frontend &amp; Backend Development
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "React.js",
-                    "JavaScript (ES6)",
-                    "Tailwind CSS",
-                    "HTML5 & CSS3",
-                    "Node.js",
-                    "REST APIs",
-                  ].map((skill) => (
-                    <span key={skill} className="px-3 py-1 rounded-md border border-white/10 bg-white/[0.02] text-neutral-200">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                <span className="text-neutral-400 block text-[10px] uppercase tracking-wider mb-2">
-                  AI / Machine Learning &amp; Databases
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "RAG Pipelines",
-                    "LangChain",
-                    "LoRA Fine-Tuning",
-                    "Hugging Face",
-                    "Local Model Deployment",
-                    "ChromaDB",
-                    "MongoDB",
-                    "SQL",
-                    "Supabase",
-                  ].map((skill) => (
-                    <span key={skill} className="px-3 py-1 rounded-md border border-white/10 bg-white/[0.02] text-neutral-200">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                <span className="text-neutral-400 block text-[10px] uppercase tracking-wider mb-2">
-                  Tools &amp; Core Concepts
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Git & GitHub",
-                    "VS Code",
-                    "Data Structures & Algorithms",
-                    "OOP",
-                    "Problem Solving",
-                    "Responsive Web Design",
-                  ].map((skill) => (
-                    <span key={skill} className="px-3 py-1 rounded-md border border-white/10 bg-white/[0.02] text-neutral-200">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Key Projects */}
-          <section>
-            <div className="flex items-center gap-2 mb-3 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-              <Briefcase className="w-4 h-4 text-white" />
-              <span>KEY PROJECTS</span>
-            </div>
-
-            <div className="space-y-4">
-              {/* Queue Management System */}
-              <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 font-mono">
-                  <h3 className="text-sm sm:text-base font-bold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    Queue Management System — Smart Queue SaaS
-                  </h3>
-                  <div className="flex items-center gap-2 text-[10px]">
-                    <a
-                      href="https://queue-management-system-vert-iota.vercel.app/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-2.5 py-1 rounded-full bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors inline-flex items-center gap-1"
-                    >
-                      <span>Live Site</span>
-                      <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
-                    <a
-                      href="https://github.com/Jayavardhan137/Queue-management-system"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-2.5 py-1 rounded-full border border-white/20 text-neutral-300 uppercase hover:border-white transition-colors"
-                    >
-                      GitHub
-                    </a>
-                  </div>
-                </div>
-                <ul className="text-xs sm:text-sm text-neutral-300 font-sans space-y-1.5 list-disc list-inside">
-                  <li>Built a smart queue management SaaS with QR code token generation, live queue tracking, real-time notifications, and role-based access control.</li>
-                  <li>Developed backend logic and REST APIs for adding, serving, and monitoring queue entries.</li>
-                  <li>Created a responsive interface for smooth use across devices.</li>
-                </ul>
-              </div>
-
-              {/* RAG Chatbot */}
-              <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 font-mono">
-                  <h3 className="text-sm sm:text-base font-bold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-purple-400" />
-                    RAG Chatbot — Document Q&amp;A
-                  </h3>
-                  <span className="text-[10px] text-neutral-400 uppercase font-mono">
-                    Python • LangChain • Vector DB • LLM
-                  </span>
-                </div>
-                <ul className="text-xs sm:text-sm text-neutral-300 font-sans space-y-1.5 list-disc list-inside">
-                  <li>Built a Retrieval-Augmented Generation chatbot that answers questions grounded in custom documents rather than relying only on a model&apos;s built-in knowledge.</li>
-                  <li>Implemented document ingestion, chunking, embedding, and semantic retrieval pipelines using LangChain.</li>
-                  <li>Designed prompts and retrieval logic to produce accurate, context-aware responses.</li>
-                </ul>
-              </div>
-
-              {/* Study Assistant Chatbot */}
-              <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 font-mono">
-                  <h3 className="text-sm sm:text-base font-bold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-400" />
-                    Study Assistant Chatbot
-                  </h3>
-                  <span className="text-[10px] text-neutral-400 uppercase font-mono">
-                    Python • LLM
-                  </span>
-                </div>
-                <ul className="text-xs sm:text-sm text-neutral-300 font-sans space-y-1.5 list-disc list-inside">
-                  <li>Developed an AI study assistant that helps students understand topics, answer questions, and revise concepts.</li>
-                  <li>Integrated a language model with a user-friendly interface for interactive, conversational learning.</li>
-                  <li>Focused on clear, helpful responses tailored to student queries.</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          {/* Additional Experience & Coding Practice */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-              <div className="flex items-center gap-2 text-white font-bold font-sans text-sm mb-2">
-                <BrainCircuit className="w-4 h-4 text-cyan-400" />
-                <span>Additional Experience</span>
-              </div>
-              <ul className="text-xs text-neutral-300 font-sans space-y-1.5 list-disc list-inside">
-                <li>Explored fine-tuning of language models using LoRA for efficient, low-resource customization.</li>
-                <li>Experimented with deploying and running AI models locally with Hugging Face.</li>
-              </ul>
-            </div>
-
-            <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-white/[0.02]">
-              <div className="flex items-center gap-2 text-white font-bold font-sans text-sm mb-2">
-                <Award className="w-4 h-4 text-amber-400" />
-                <span>Coding Practice</span>
-              </div>
-              <p className="text-xs text-neutral-300 font-sans leading-relaxed mb-2">
-                Completed the <strong>30-Day LeetCode Challenge</strong>, solving Data Structures &amp; Algorithms problems to strengthen computational problem-solving.
-              </p>
-              <a
-                href="https://leetcode.com/u/Aig0bDIRyp"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 hover:underline"
-              >
-                <span>leetcode.com/u/Aig0bDIRyp</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
+
+      {/* Minimal Footer */}
+      <footer className="py-6 border-t border-white/10 text-center text-xs font-mono text-neutral-500">
+        <span>{PERSONAL_INFO.name} • 2026</span>
+      </footer>
     </div>
   );
 }
