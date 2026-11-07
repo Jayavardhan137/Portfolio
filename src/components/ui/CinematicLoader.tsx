@@ -33,6 +33,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     return false;
   });
 
+  const isFinishedRef = useRef(isFinished);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
   const stemRef = useRef<HTMLDivElement | null>(null);
@@ -217,6 +218,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   const finish = useCallback(() => {
     runIdRef.current++;
+    isFinishedRef.current = true;
     setIsFinished(true);
     if (onComplete) onComplete();
   }, [onComplete]);
@@ -232,7 +234,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     if (!dot || !stem || !glow || !word || !sub) return;
 
     const id = ++runIdRef.current;
-    const live = () => id === runIdRef.current && !isFinished;
+    const live = () => id === runIdRef.current && !isFinishedRef.current;
 
     [dot, stem, glow, sub].forEach((e) => {
       if (!e) return;
@@ -442,7 +444,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
     await wait(2400);
     if (!live()) return;
     finish();
-  }, [bounce, boom, finish, isFinished, keySound, loadKeys, whoosh]);
+  }, [bounce, boom, finish, keySound, loadKeys, whoosh]);
 
   // Screen interaction handler: unlocks audio and seamlessly replays with audio if it started silent
   const handleScreenInteraction = useCallback(async () => {
@@ -476,6 +478,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         } else if (sessionStorage.getItem("skipLoaderForReturn") === "true") {
           // Returning from internal page (Resume or Contact) -> skip loader once
           sessionStorage.removeItem("skipLoaderForReturn");
+          isFinishedRef.current = true;
           setIsFinished(true);
           if (onComplete) onComplete();
           return;
@@ -483,6 +486,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
       } catch (e) {}
     }
 
+    isFinishedRef.current = false;
     setIsFinished(false);
 
     const a = getAudioContext();
@@ -513,7 +517,8 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         } catch (e) {}
       }
     };
-  }, [getAudioContext, handleScreenInteraction, loadKeys, onComplete, play]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AnimatePresence>
