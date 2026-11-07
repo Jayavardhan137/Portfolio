@@ -9,7 +9,29 @@ interface CinematicLoaderProps {
 }
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
-  const [isFinished, setIsFinished] = useState(true);
+  const [isFinished, setIsFinished] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const navEntry = window.performance?.getEntriesByType?.("navigation")?.[0] as
+          | PerformanceNavigationTiming
+          | undefined;
+        const isReload = navEntry
+          ? navEntry.type === "reload"
+          : (window.performance as any)?.navigation?.type === 1;
+
+        if (isReload) {
+          sessionStorage.removeItem("skipLoaderForReturn");
+          sessionStorage.removeItem("hasLoadedPortfolio");
+          return false;
+        }
+
+        if (sessionStorage.getItem("skipLoaderForReturn") === "true") {
+          return true;
+        }
+      } catch (e) {}
+    }
+    return false;
+  });
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -195,11 +217,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   const finish = useCallback(() => {
     runIdRef.current++;
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("hasLoadedPortfolio", "true");
-      } catch (e) {}
-    }
     setIsFinished(true);
     if (onComplete) onComplete();
   }, [onComplete]);
@@ -445,7 +462,20 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        if (sessionStorage.getItem("hasLoadedPortfolio") === "true") {
+        const navEntry = window.performance?.getEntriesByType?.("navigation")?.[0] as
+          | PerformanceNavigationTiming
+          | undefined;
+        const isReload = navEntry
+          ? navEntry.type === "reload"
+          : (window.performance as any)?.navigation?.type === 1;
+
+        if (isReload) {
+          // Explicit browser reload -> always play loader!
+          sessionStorage.removeItem("skipLoaderForReturn");
+          sessionStorage.removeItem("hasLoadedPortfolio");
+        } else if (sessionStorage.getItem("skipLoaderForReturn") === "true") {
+          // Returning from internal page (Resume or Contact) -> skip loader once
+          sessionStorage.removeItem("skipLoaderForReturn");
           setIsFinished(true);
           if (onComplete) onComplete();
           return;

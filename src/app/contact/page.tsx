@@ -83,7 +83,7 @@ function ContactPageContent() {
               playClick();
               if (typeof window !== "undefined") {
                 try {
-                  sessionStorage.setItem("hasLoadedPortfolio", "true");
+                  sessionStorage.setItem("skipLoaderForReturn", "true");
                 } catch (e) {}
               }
             }}

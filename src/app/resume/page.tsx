@@ -50,7 +50,7 @@ export default function ResumePage() {
               playClick();
               if (typeof window !== "undefined") {
                 try {
-                  sessionStorage.setItem("hasLoadedPortfolio", "true");
+                  sessionStorage.setItem("skipLoaderForReturn", "true");
                 } catch (e) {}
               }
             }}
@@ -62,6 +62,14 @@ export default function ResumePage() {
 
           <Link
             href="/"
+            onClick={() => {
+              playClick();
+              if (typeof window !== "undefined") {
+                try {
+                  sessionStorage.setItem("skipLoaderForReturn", "true");
+                } catch (e) {}
+              }
+            }}
             className="font-mono text-sm font-bold tracking-[0.2em] text-white hover:text-neutral-300 transition-colors"
           >
             {PERSONAL_INFO.shortName} •
