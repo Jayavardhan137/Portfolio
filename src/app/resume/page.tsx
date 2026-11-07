@@ -50,9 +50,14 @@ export default function ResumePage() {
       <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-14 bg-[#070709]/85 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link
-            href="/"
+            href="/#home"
             onMouseEnter={playHover}
-            onClick={playClick}
+            onClick={() => {
+              playClick();
+              try {
+                sessionStorage.setItem("portfolio_loader_shown", "true");
+              } catch (e) {}
+            }}
             className="flex items-center gap-2 text-xs font-mono tracking-widest text-neutral-300 hover:text-white transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -60,7 +65,12 @@ export default function ResumePage() {
           </Link>
 
           <Link
-            href="/"
+            href="/#home"
+            onClick={() => {
+              try {
+                sessionStorage.setItem("portfolio_loader_shown", "true");
+              } catch (e) {}
+            }}
             className="font-mono text-sm font-bold tracking-[0.2em] text-white hover:text-neutral-300 transition-colors"
           >
             {PERSONAL_INFO.shortName} •
