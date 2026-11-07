@@ -8,11 +8,12 @@ import { useAudio } from "@/hooks/useAudio";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 
 const NAV_ITEMS = [
-  { label: "HOME", href: "#home" },
-  { label: "ABOUT ME", href: "#about" },
-  { label: "MY JOURNEY", href: "#journey" },
-  { label: "PROJECTS", href: "#projects" },
-  { label: "SERVICES", href: "#services" },
+  { label: "HOME", href: "/#home" },
+  { label: "ABOUT ME", href: "/#about" },
+  { label: "MY JOURNEY", href: "/#journey" },
+  { label: "PROJECTS", href: "/#projects" },
+  { label: "SERVICES", href: "/#services" },
+  { label: "RESUME", href: "/resume" },
 ];
 
 export function Navbar() {
@@ -41,7 +42,7 @@ export function Navbar() {
         <div className="max-w-[1400px] mx-auto px-6 md:px-14 flex items-center justify-between">
           {/* Brand Wordmark with expanding dot */}
           <a
-            href="#home"
+            href="/#home"
             onMouseEnter={playHover}
             onClick={playClick}
             className="group font-black text-xl tracking-tight text-black flex items-center select-none"
@@ -107,6 +108,14 @@ export function Navbar() {
               <GithubIcon className="w-4 h-4" />
             </a>
 
+            {/* Resume Page Link Pill */}
+            <a
+              href="/resume"
+              className="px-3.5 py-1.5 rounded-full border border-neutral-300 text-black text-[11px] font-mono tracking-wider font-semibold hover:border-black hover:bg-neutral-100 transition shadow-sm ml-1 hidden sm:inline-block"
+            >
+              RESUME
+            </a>
+
             {/* Contact Page Link Pill */}
             <a
               href="/contact"
@@ -166,6 +175,13 @@ export function Navbar() {
                       {item.label}
                     </a>
                   ))}
+                  <a
+                    href="/resume"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="py-2 text-black hover:underline"
+                  >
+                    RESUME &amp; ABOUT ME
+                  </a>
                   <a
                     href="/contact"
                     onClick={() => setMobileMenuOpen(false)}
