@@ -77,14 +77,9 @@ function ContactPageContent() {
       <header className="fixed top-0 left-0 right-0 z-50 py-6 px-6 sm:px-8 md:px-12 bg-[#050505]/85 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <a
-            href="/#home"
+            href="/"
             onMouseEnter={playHover}
-            onClick={() => {
-              playClick();
-              try {
-                sessionStorage.setItem("portfolio_loader_shown", "true");
-              } catch (e) {}
-            }}
+            onClick={playClick}
             className="flex items-center gap-2 text-xs font-mono tracking-widest text-neutral-300 hover:text-white transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -92,12 +87,7 @@ function ContactPageContent() {
           </a>
 
           <a
-            href="/#home"
-            onClick={() => {
-              try {
-                sessionStorage.setItem("portfolio_loader_shown", "true");
-              } catch (e) {}
-            }}
+            href="/"
             className="font-mono text-sm font-bold tracking-[0.2em] text-white"
           >
             {PERSONAL_INFO.shortName} •

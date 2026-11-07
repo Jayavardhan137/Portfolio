@@ -9,20 +9,7 @@ interface CinematicLoaderProps {
 }
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
-  const [isFinished, setIsFinished] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return (
-          sessionStorage.getItem("portfolio_loader_shown") === "true" ||
-          window.location.hash.length > 0 ||
-          window.location.search.includes("skip")
-        );
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  });
+  const [isFinished, setIsFinished] = useState(false);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -208,9 +195,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   const finish = useCallback(() => {
     runIdRef.current++;
-    try {
-      sessionStorage.setItem("portfolio_loader_shown", "true");
-    } catch (e) {}
     setIsFinished(true);
     if (onComplete) onComplete();
   }, [onComplete]);
@@ -454,11 +438,6 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   // Immediate autoplay on mount + transparent gesture unlock
   useEffect(() => {
-    if (isFinished) {
-      if (onComplete) onComplete();
-      return;
-    }
-
     const a = getAudioContext();
     if (a && a.state === "running") {
       audioUnlockedRef.current = true;
@@ -487,11 +466,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         } catch (e) {}
       }
     };
-  }, [getAudioContext, handleScreenInteraction, isFinished, loadKeys, onComplete, play]);
-
-  if (isFinished) {
-    return null;
-  }
+  }, [getAudioContext, handleScreenInteraction, loadKeys, play]);
 
   return (
     <AnimatePresence>
