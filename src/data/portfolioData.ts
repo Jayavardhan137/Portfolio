@@ -59,7 +59,7 @@ export const PERSONAL_INFO = {
   bioHeadline: "CURIOUS MIND. CREATIVE THINKER. TECHNOLOGY BUILDER.",
   bioParagraphs: [
     "I'm Jayavardhan, a Computer Science student specializing in AI & Machine Learning. I enjoy transforming complex problems into useful digital experiences through software development, artificial intelligence, and creative experimentation.",
-    "I build applications, experiment with emerging technologies, and constantly explore new ways to make technology useful in everyday life."
+    "I build websites, experiment with emerging technologies, and constantly explore new ways to make technology useful in everyday life."
   ],
   focusAreas: [
     "AI & Machine Learning Systems",
@@ -93,7 +93,6 @@ export const PROJECTS: Project[] = [
       "Token rescheduling & customer priority routing"
     ],
     technologies: [
-      "Next.js",
       "React",
       "TypeScript",
       "Node.js",
@@ -138,9 +137,8 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     name: "FRONTEND",
     watermark: "INTERFACES",
     headline: "SCALABLE & IMMERSIVE CLIENT EXPERIENCES",
-    description: "Building responsive, editorial-grade web applications with modern component architectures, type safety, and fluid motion.",
+    description: "Building responsive, editorial-grade websites with modern component architectures, type safety, and fluid motion.",
     skills: [
-      { name: "Next.js", tag: "App Router" },
       { name: "React", tag: "Components" },
       { name: "TypeScript", tag: "Type System" },
       { name: "Tailwind CSS", tag: "Styling" },
@@ -189,7 +187,7 @@ export const SERVICES: Service[] = [
       "Backend APIs & Database Design",
       "Authentication & State Management"
     ],
-    techStack: ["Next.js", "React", "Node.js", "Supabase", "Tailwind CSS"]
+    techStack: ["React", "Node.js", "Supabase", "Tailwind CSS"]
   },
   {
     number: "02",
@@ -228,7 +226,7 @@ export const SERVICES: Service[] = [
       "SEO & Performance Optimization",
       "Content Management Integration"
     ],
-    techStack: ["Next.js", "Tailwind CSS", "Framer Motion", "Vercel"]
+    techStack: ["React", "Tailwind CSS", "Framer Motion", "Vercel"]
   },
   {
     number: "05",

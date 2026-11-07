@@ -69,7 +69,6 @@ export function MyJourneySection() {
     "HTML & CSS",
     "JavaScript",
     "React.js",
-    "Next.js",
     "Tailwind CSS",
     "Node.js",
     "Python",
@@ -227,7 +226,7 @@ export function MyJourneySection() {
                     — helped me understand how websites render, handle user
                     inputs, and structure information. Gradually, writing markup
                     evolved into an appetite for building interactive
-                    applications and exploring deeper computing systems.
+                    websites and exploring deeper computing systems.
                   </p>
 
                   <div className="grid grid-cols-3 gap-2 font-mono text-[11px]">
@@ -241,7 +240,7 @@ export function MyJourneySection() {
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
                       <span className="text-white font-bold block">First Builds</span>
-                      <span className="text-neutral-400 text-[10px] font-sans">Interactive Web Apps</span>
+                      <span className="text-neutral-400 text-[10px] font-sans">Interactive Websites</span>
                     </div>
                   </div>
                 </div>
@@ -263,12 +262,12 @@ export function MyJourneySection() {
 
                   <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans mb-3">
                     As my foundation solidified, I expanded my technical
-                    knowledge across the full software stack. I firmly believe in{" "}
+                    knowledge across the software stack. I firmly believe in{" "}
                     <strong className="text-white">
-                      learning by building practical applications rather than
+                      learning by building practical websites rather than
                       only studying theory
                     </strong>
-                    . Moving to React, Next.js, and Node.js gave me end-to-end
+                    . Moving to React, Tailwind CSS, and Node.js gave me end-to-end
                     perspective, while C++ and Python deepened my algorithmic
                     discipline.
                   </p>
@@ -422,7 +421,7 @@ export function MyJourneySection() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-black text-[10px] font-bold tracking-wider uppercase hover:bg-neutral-200 transition-colors"
                       >
-                        <span>LIVE APP</span>
+                        <span>LIVE SITE</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
@@ -591,7 +590,7 @@ export function MyJourneySection() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-mono text-[11px]">
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
-                      <span className="text-white font-bold block">1. DSA Rigor</span>
+                      <span className="text-white font-bold block">1. DSA</span>
                       <span className="text-neutral-400 text-[10px] font-sans">Algorithms &amp; Complexity</span>
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
@@ -600,15 +599,15 @@ export function MyJourneySection() {
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
                       <span className="text-white font-bold block">3. Full-Stack</span>
-                      <span className="text-neutral-400 text-[10px] font-sans">Next.js &amp; Architecture</span>
+                      <span className="text-neutral-400 text-[10px] font-sans">React &amp; Web Architecture</span>
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
                       <span className="text-white font-bold block">4. AI Engineering</span>
                       <span className="text-neutral-400 text-[10px] font-sans">LLMs &amp; Vector Stores</span>
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
-                      <span className="text-white font-bold block">5. Practical Apps</span>
-                      <span className="text-neutral-400 text-[10px] font-sans">Real-World Utility</span>
+                      <span className="text-white font-bold block">5. Practical Websites</span>
+                      <span className="text-neutral-400 text-[10px] font-sans">Real-World Web Platforms</span>
                     </div>
                     <div className="p-2.5 rounded-xl border border-white/10 bg-white/[0.02]">
                       <span className="text-white font-bold block">6. Fundamentals</span>

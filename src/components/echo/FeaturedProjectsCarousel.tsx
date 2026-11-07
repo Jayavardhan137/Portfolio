@@ -27,7 +27,6 @@ const ALL_PROJECTS: ProjectItem[] = [
     category: "AI SYSTEM • FULL-STACK CLOUD PLATFORM",
     link: "https://queue-management-system-vert-iota.vercel.app/",
     tools: [
-      "Next.js",
       "React",
       "TypeScript",
       "Tailwind CSS",
@@ -87,7 +86,7 @@ export function FeaturedProjectsCarousel() {
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-full border border-neutral-300 bg-white text-xs font-mono font-bold tracking-widest uppercase hover:border-black hover:text-black transition-all shadow-sm hidden sm:inline-flex items-center gap-1.5"
           >
-            <span>LAUNCH APP</span>
+            <span>LAUNCH SITE</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
 
