@@ -9,7 +9,7 @@ interface CinematicLoaderProps {
 }
 
 export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
-  const [isFinished, setIsFinished] = useState(false);
+  const [isFinished, setIsFinished] = useState(true);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -195,6 +195,11 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   const finish = useCallback(() => {
     runIdRef.current++;
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("hasLoadedPortfolio", "true");
+      } catch (e) {}
+    }
     setIsFinished(true);
     if (onComplete) onComplete();
   }, [onComplete]);
@@ -438,6 +443,18 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
 
   // Immediate autoplay on mount + transparent gesture unlock
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem("hasLoadedPortfolio") === "true") {
+          setIsFinished(true);
+          if (onComplete) onComplete();
+          return;
+        }
+      } catch (e) {}
+    }
+
+    setIsFinished(false);
+
     const a = getAudioContext();
     if (a && a.state === "running") {
       audioUnlockedRef.current = true;
@@ -466,7 +483,7 @@ export function CinematicLoader({ onComplete }: CinematicLoaderProps) {
         } catch (e) {}
       }
     };
-  }, [getAudioContext, handleScreenInteraction, loadKeys, play]);
+  }, [getAudioContext, handleScreenInteraction, loadKeys, onComplete, play]);
 
   return (
     <AnimatePresence>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ExternalLink,
+  Download,
   MapPin,
   Mail,
   Phone,
@@ -45,7 +46,14 @@ export default function ResumePage() {
           <Link
             href="/"
             onMouseEnter={playHover}
-            onClick={playClick}
+            onClick={() => {
+              playClick();
+              if (typeof window !== "undefined") {
+                try {
+                  sessionStorage.setItem("hasLoadedPortfolio", "true");
+                } catch (e) {}
+              }
+            }}
             className="flex items-center gap-2 text-xs font-mono tracking-widest text-neutral-300 hover:text-white transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -120,19 +128,30 @@ export default function ResumePage() {
             </button>
           </div>
 
-          {/* Single Prominent View Resume Button */}
-          <div className="mb-8">
+          {/* Action Buttons: View & Download Resume */}
+          <div className="flex flex-wrap items-center gap-3.5 mb-8">
             <a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={playHover}
               onClick={playClick}
-              className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-black font-mono text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-xl hover:shadow-white/10 group"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-white text-black font-mono text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-xl hover:shadow-white/10 group"
             >
               <Eye className="w-4 h-4" />
               <span>VIEW RESUME</span>
               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
+
+            <a
+              href="/resume.pdf"
+              download="Jayavardhan_Malamanti_Resume.pdf"
+              onMouseEnter={playHover}
+              onClick={playClick}
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full border border-white/20 bg-white/[0.04] text-white font-mono text-xs font-bold tracking-widest uppercase hover:border-white hover:bg-white/10 transition-all shadow-sm group"
+            >
+              <Download className="w-4 h-4" />
+              <span>DOWNLOAD RESUME</span>
             </a>
           </div>
 

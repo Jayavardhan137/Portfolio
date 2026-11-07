@@ -79,7 +79,14 @@ function ContactPageContent() {
           <a
             href="/"
             onMouseEnter={playHover}
-            onClick={playClick}
+            onClick={() => {
+              playClick();
+              if (typeof window !== "undefined") {
+                try {
+                  sessionStorage.setItem("hasLoadedPortfolio", "true");
+                } catch (e) {}
+              }
+            }}
             className="flex items-center gap-2 text-xs font-mono tracking-widest text-neutral-300 hover:text-white transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
